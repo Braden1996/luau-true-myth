@@ -25,21 +25,22 @@ export default defineConfig({
       },
       sidebar: [
         {
-          label: "Start here",
+          label: "Introduction",
           items: [
-            { label: "Introduction", link: "/" },
-            { slug: "start/install" },
-            { slug: "start/editor-setup" },
+            { slug: "introduction" },
+            { slug: "getting-started/install" },
+            { slug: "getting-started/editor-setup" },
+            { slug: "getting-started/tour" },
           ],
         },
         {
-          label: "Guides",
+          label: "Understanding",
           items: [
-            { slug: "guides/maybe" },
-            { slug: "guides/result" },
-            { slug: "guides/task" },
-            { slug: "guides/exhaustive-matching" },
-            { slug: "guides/new-solver-tips" },
+            { slug: "understanding/maybe" },
+            { slug: "understanding/result" },
+            { slug: "understanding/task" },
+            { slug: "understanding/exhaustive-matching" },
+            { slug: "understanding/new-solver-tips" },
           ],
         },
         {
@@ -55,13 +56,16 @@ export default defineConfig({
           ],
         },
         {
-          label: "Project",
+          label: "Background",
           items: [
+            { slug: "background/lua-vs-typescript" },
             { slug: "project/design" },
             { slug: "project/strict-luau-guide" },
-            { slug: "project/contributing" },
-            { slug: "project/changelog" },
           ],
+        },
+        {
+          label: "Project",
+          items: [{ slug: "project/contributing" }, { slug: "project/changelog" }],
         },
       ],
     }),
