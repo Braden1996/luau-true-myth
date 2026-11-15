@@ -18,11 +18,15 @@ Callbacks that only pass their parameter on, such as `tostring`, need no annotat
 
 ## Give empty lists a type
 
-An empty table literal has no element type, so the library cannot tell what it holds:
+An empty table literal has no element type, so the library cannot tell what it holds. The call itself is accepted,
+but its result cannot be used:
 
-```luau
-Result.all({})                                 -- error: expected a Result, got unknown
-Result.all({} :: { Result<number, string> })   -- fine
+```luau check
+local untyped = Result.all({})
+if untyped.kind == "Ok" then print(#untyped.value) end  -- error: expected a Result, got unknown
+
+local typed = Result.all({} :: { Result.Result<number, string> })
+if typed.kind == "Ok" then print(#typed.value) end      -- fine
 ```
 
 ## Name types that appear only in a result

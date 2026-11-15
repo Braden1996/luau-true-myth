@@ -46,7 +46,7 @@ tasks:
     options:
       cache: false
   test:
-    description: "bun test: the doc-comment parser, and every library function is documented"
+    description: "bun test: every public library function has API prose in docs/api"
     command: "bun"
     args: ["test"]
     deps: ["~:install"]
