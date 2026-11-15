@@ -1,0 +1,17 @@
+name: Feature
+description: A function from true-myth that is missing here, or a new helper that fits the library.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: use
+    attributes:
+      label: The code you want to write
+      render: luau
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why the existing functions do not cover it
+    validations:
+      required: true

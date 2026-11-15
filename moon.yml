@@ -1,0 +1,37 @@
+$schema: "./.moon/cache/schemas/project.json"
+
+# Project `repo`: whole-tree checks. `cache: false`: they are cheap and must see the whole tree.
+layer: "configuration"
+tags: ["repo"]
+
+taskOptions:
+  shell: false
+  cache: false
+  runFromWorkspaceRoot: true
+
+tasks:
+  typos:
+    description: "Spelling (_typos.toml)"
+    command: "typos"
+  actionlint:
+    description: "GitHub workflow lint"
+    command: "actionlint"
+  links:
+    description: "Offline link check of every Markdown file"
+    command: "lychee"
+    args: ["--offline", "--include-fragments", "--no-progress", "./*.md", "./docs/*.md", "./.github/**/*.md"]
+  banner-fresh:
+    description: "Fail if .github/banner.svg differs from `lune run scripts/banner`"
+    command: "lune"
+    args: ["run", "scripts/banner", "--", "--check"]
+  fmt:
+    description: "Format Markdown, JSON, YAML and TOML (dprint.json)"
+    command: "dprint"
+    args: ["fmt"]
+  fmt-check:
+    description: "dprint check: Markdown, JSON, YAML and TOML formatting (run `moon run repo:fmt` to fix)"
+    command: "dprint"
+    args: ["check"]
+  check:
+    description: "Aggregator: every repo-wide check"
+    deps: ["~:typos", "~:actionlint", "~:links", "~:banner-fresh", "~:fmt-check"]

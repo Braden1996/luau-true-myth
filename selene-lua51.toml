@@ -1,0 +1,3 @@
+# selene for the generated Lua 5.1 bundle (dist/TrueMyth.lua): only Lua 5.1's standard library exists, so a
+# Luau-only function (table.clone, string.split, ...) that slipped through darklua is an error.
+std = "lua51"

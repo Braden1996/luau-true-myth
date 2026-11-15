@@ -1,0 +1,15 @@
+# Dependabot keeps the SHA-pinned GitHub Actions current. Tools are pinned in mise.toml (bump by hand, then
+# `mise lock` and `moon run :check`).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: build
+      include: scope

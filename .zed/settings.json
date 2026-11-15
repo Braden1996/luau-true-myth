@@ -1,0 +1,19 @@
+{
+  // Zed with the "Luau" extension: the same luau-lsp settings as .vscode/settings.json.
+  "lsp": {
+    "luau-lsp": {
+      "settings": {
+        "roblox": { "enabled": false },
+        "fflags": { "enable_new_solver": true },
+        "luau-lsp": {
+          "platform": { "type": "standard" },
+          "sourcemap": { "enabled": false },
+          "ignoreGlobs": ["dist/**", "tests/fail/**"]
+        }
+      }
+    }
+  },
+  "languages": {
+    "Luau": { "hard_tabs": true, "tab_size": 4, "preferred_line_length": 120 }
+  }
+}

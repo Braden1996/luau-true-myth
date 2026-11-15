@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 1280 400" role="img" aria-labelledby="title desc">
+  <title id="title">luau-true-myth</title>
+  <desc id="desc">Maybe, Result and Task for strict Luau, in Lune and in World of Warcraft addons</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d1117"/><stop offset="1" stop-color="#1b1033"/></linearGradient>
+    <linearGradient id="ok" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7ee2a8"/><stop offset="1" stop-color="#2fb36d"/></linearGradient>
+    <linearGradient id="err" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9a8b"/><stop offset="1" stop-color="#e5484d"/></linearGradient>
+    <linearGradient id="core" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8ab4ff"/><stop offset="1" stop-color="#3d63dd"/></linearGradient>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" fill="#ffffff" fill-opacity="0.05" r="1"/>
+    </pattern>
+  </defs>
+  <rect fill="url(#bg)" height="400" width="1280"/>
+  <rect fill="url(#dots)" height="400" width="1280"/>
+  <path d="M120 200 C 200 200, 220 110, 300 110" fill="none" stroke="url(#ok)" stroke-linecap="round" stroke-width="10"/>
+  <path d="M120 200 C 200 200, 220 290, 300 290" fill="none" stroke="url(#err)" stroke-linecap="round" stroke-width="10"/>
+  <circle cx="110" cy="200" fill="url(#core)" r="34"/>
+  <text fill="#0d1117" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="26" font-weight="700" text-anchor="middle" x="110" y="210">T?</text>
+  <rect fill="url(#ok)" height="48" rx="12" width="70" x="300" y="86"/>
+  <text fill="#0d1117" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="22" font-weight="700" text-anchor="middle" x="335" y="118">Ok</text>
+  <rect fill="url(#err)" height="48" rx="12" width="70" x="300" y="266"/>
+  <text fill="#0d1117" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="22" font-weight="700" text-anchor="middle" x="335" y="298">Err</text>
+  <text fill="#ffffff" font-family="'Segoe UI','Inter','Helvetica Neue',Arial,sans-serif" font-size="68" font-weight="700" letter-spacing="-1" x="440" y="150">luau-true-myth</text>
+  <text fill="#c9d1ff" font-family="'Segoe UI','Inter','Helvetica Neue',Arial,sans-serif" font-size="24" x="442" y="196">Maybe, Result and Task for strict Luau: Lune scripts and WoW addons alike</text>
+  <rect fill="#0d1117" fill-opacity="0.8" height="58" rx="10" stroke="#3d63dd" stroke-opacity="0.6" width="640" x="440" y="226"/>
+  <text font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="22" x="464" y="263"><tspan fill="#c678dd">local</tspan><tspan fill="#e6edf3"> quest</tspan><tspan fill="#8b949e">: </tspan><tspan fill="#8ab4ff">Result</tspan><tspan fill="#8b949e">&lt;</tspan><tspan fill="#8ab4ff">Quest</tspan><tspan fill="#8b949e">, </tspan><tspan fill="#ff9a8b">NotFound</tspan><tspan fill="#8b949e">&gt;</tspan><tspan fill="#8b949e"> = </tspan><tspan fill="#7ee2a8">find</tspan><tspan fill="#e6edf3">(id)</tspan></text>
+  <text fill="#7ee2a8" font-family="'Segoe UI','Inter','Helvetica Neue',Arial,sans-serif" font-size="20" x="442" y="336">v0.1.0  ·  96 functions  ·  --!strict on the new solver  ·  ships as Lua 5.1</text>
+</svg>
