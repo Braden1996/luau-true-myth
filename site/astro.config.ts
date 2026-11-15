@@ -3,6 +3,7 @@ import { defineConfig } from "astro/config";
 
 const repository = "https://github.com/Braden1996/luau-true-myth";
 
+// Expressive Code's options, including the Luau checking plugin, are in ec.config.mjs.
 // https://astro.build/config: fully static output for GitHub Pages (project site under /luau-true-myth/).
 export default defineConfig({
   site: "https://braden1996.github.io",
@@ -20,9 +21,6 @@ export default defineConfig({
       editLink: { baseUrl: `${repository}/edit/main/site/` },
       lastUpdated: true,
       customCss: ["./src/styles/theme.css"],
-      expressiveCode: {
-        themes: ["github-dark-default", "github-light-default"],
-      },
       sidebar: [
         {
           label: "Introduction",

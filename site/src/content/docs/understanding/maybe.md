@@ -8,7 +8,7 @@ wherever a value may be missing and the caller must decide what that means.
 
 ## Create
 
-```luau
+```luau check
 local Maybe = TrueMyth.Maybe
 
 local level = Maybe.of(UnitLevel("target")) -- Maybe<number>: Nothing for nil
@@ -21,7 +21,9 @@ nil, and its value type has nil removed.
 
 ## Narrow
 
-```luau
+```luau check
+local level = Maybe.of(UnitLevel("target"))
+-- ---cut---
 if level.kind == "Just" then
 	print(level.value + 1)   -- fine: narrowed to Just<number>
 end
@@ -30,7 +32,9 @@ print(level.value)           -- error: Key 'value' is missing from 'Nothing'
 
 ## Transform
 
-```luau
+```luau check
+local level = Maybe.of(UnitLevel("target"))
+-- ---cut---
 local nextLevel = Maybe.map(level, function(n: number): number
 	return n + 1
 end)
@@ -49,7 +53,13 @@ local text = Maybe.match(nextLevel, {
 
 ## Lists and maps
 
-```luau
+```luau check
+local quests: { Quest } = {}
+local counts: { [number]: number } = {}
+local itemId = 6948
+local a: number? = 1
+local b: number? = nil
+-- ---cut---
 local first = Maybe.find(quests, function(q: Quest): boolean
 	return q.zone == "Elwynn Forest"
 end)

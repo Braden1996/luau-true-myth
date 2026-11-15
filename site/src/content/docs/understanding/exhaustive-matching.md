@@ -6,7 +6,11 @@ description: Make the type checker fail when a variant of a tagged union is not 
 Luau does not check that an `if`/`elseif` chain over a union's `kind` covers every variant. It does not report a
 comparison with a tag the union does not have: `e.kind == "Expired"` type-checks. End every chain with `Exhaustive.casesHandled`:
 
-```luau
+```luau check
+type NotFound = { read kind: "NotFound", read id: number }
+type Invalid = { read kind: "Invalid", read reason: string }
+type LookupError = NotFound | Invalid
+-- ---cut---
 local function describe(e: LookupError): string
 	if e.kind == "NotFound" then
 		return "no quest " .. e.id

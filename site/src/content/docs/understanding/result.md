@@ -10,7 +10,9 @@ Return one from every operation that can fail in a known way. Reserve `error()` 
 
 Make errors tagged tables, so callers can tell them apart and the checker can tell when one is unhandled:
 
-```luau
+```luau check
+type Result<T, E> = Result.Result<T, E>
+-- ---cut---
 type NotFound = { read kind: "NotFound", read id: number }
 type Invalid = { read kind: "Invalid", read reason: string }
 type LookupError = NotFound | Invalid
@@ -32,7 +34,22 @@ The `:: Invalid` casts tell Luau which variant a table literal is. They are chec
 
 ## Chain
 
-```luau
+```luau check
+type NotFound = { read kind: "NotFound", read id: number }
+local function findQuest(id: number): Result.Result<Quest, NotFound>
+	return if QUESTS[id] then Result.ok(QUESTS[id]) else Result.err({ kind = "NotFound", id = id } :: NotFound)
+end
+type ParseError = { read kind: "ParseError", read message: string }
+type MigrationError = { read kind: "MigrationError", read from: number }
+type Settings = { version: number, volume: number }
+local raw = "{}"
+local function parse(text: string): Result.Result<{ version: number }, ParseError>
+	return Result.ok({ version = #text })
+end
+local function migrate(data: { version: number }): Result.Result<Settings, MigrationError>
+	return Result.ok({ version = data.version, volume = 1 })
+end
+-- ---cut---
 local saved = Result.andThen(parse(raw), migrate)      -- Result<Settings, ParseError | MigrationError>
 local title = Result.mapOr(findQuest(7), "?", function(q: Quest): string
 	return q.title
@@ -44,7 +61,20 @@ produce.
 
 ## Lists
 
-```luau
+```luau check
+type NotFound = { read kind: "NotFound", read id: number }
+local function findQuest(id: number): Result.Result<Quest, NotFound>
+	return if QUESTS[id] then Result.ok(QUESTS[id]) else Result.err({ kind = "NotFound", id = id } :: NotFound)
+end
+local lookups: { Result.Result<Quest, NotFound> } = { findQuest(3) }
+local id = 7
+local function fromCache(id: number): Result.Result<Quest, string>
+	return Result.err("not cached")
+end
+local function fromServer(id: number): Result.Result<Quest, string>
+	return Result.err("offline")
+end
+-- ---cut---
 local all = Result.all({ findQuest(1), findQuest(2) })    -- Ok of every quest, or the first error
 local quests, missing = Result.partition(lookups)         -- ({ Quest }, { LookupError })
 local any = Result.any({ fromCache(id), fromServer(id) }) -- the first Ok, or every error
@@ -55,7 +85,12 @@ local any = Result.any({ fromCache(id), fromServer(id) }) -- the first Ok, or ev
 WoW APIs, string parsing and third-party Lua can raise. Wrap them once, where they enter your code, and turn the
 raised value into a typed error:
 
-```luau
+```luau check
+type ParseError = { kind: "ParseError", message: string }
+local function decode(text: string): { [string]: unknown }
+	return { text = text }
+end
+-- ---cut---
 local parse = Result.safe(decode, function(raised: unknown): ParseError
 	return { kind = "ParseError", message = tostring(raised) }
 end)

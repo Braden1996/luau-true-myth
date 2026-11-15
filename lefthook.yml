@@ -7,7 +7,7 @@ pre-commit:
   jobs:
     - name: stylua
       glob: "*.luau"
-      run: mise exec -- stylua --check {staged_files}
+      run: mise exec -- stylua --check --respect-ignores {staged_files}
     - name: dprint
       glob: "*.{md,json,yml,yaml,toml}"
       run: mise exec -- dprint check --allow-no-files {staged_files}

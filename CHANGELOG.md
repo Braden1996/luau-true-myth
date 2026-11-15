@@ -10,6 +10,9 @@ All notable changes to this project are documented here. The format follows
 - A documentation site on GitHub Pages (<https://braden1996.github.io/luau-true-myth/>): guides, an API reference
   generated from the doc comments in `src/`, and the design notes and strict Luau guide. Astro and Starlight, with
   strict TypeScript 7, oxlint and oxfmt, in `site/`.
+- The guides' examples (blocks marked ` ```luau check `) are type-checked against the library as the site builds, by
+  [luau-web-checker](https://github.com/Braden1996/luau-web-checker), and show the inferred type of each name on hover.
+  Their hidden setup (a shared quest log, and per-block lines above `-- ---cut---`) is checked too.
 
 ## [0.1.0] - 2026-11-15
 

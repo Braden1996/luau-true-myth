@@ -46,9 +46,14 @@ Most bugs in Lua code come from three places: using a value that turned out to b
 can fail, and losing track of work that finishes later. luau-true-myth gives each one a type, so the type checker
 catches the mistake before the game or script does.
 
-```luau
+```luau check
+type NotFound = { read kind: "NotFound", read id: number }
+local function findQuest(id: number): Result.Result<Quest, NotFound>
+	return if QUESTS[id] then Result.ok(QUESTS[id]) else Result.err({ kind = "NotFound", id = id } :: NotFound)
+end
+-- ---cut---
 local found = findQuest(42)          -- Result<Quest, NotFound>
-print(found.value)                   -- type error: it might be a NotFound
+print(found.value)                   -- error: it might be a NotFound
 if found.kind == "Ok" then
 	print(found.value.title)         -- fine: this is the success case
 end
