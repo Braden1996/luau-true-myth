@@ -63,5 +63,14 @@ end)
 
 `Result.tryOr` and `Result.tryOrElse` do the same for a single call.
 
+## When to use it
+
+- **For every failure you expect.** Missing data, bad input, a request that was refused: return a `Result`. Keep
+  `error()` for real bugs, like a broken invariant.
+- **With specific error types.** A union of small tagged tables (`NotFound | Invalid`) tells callers exactly what
+  can happen. A plain string error tells them almost nothing.
+- **At the edge with code that raises.** Wrap it once with `Result.safe` or `Result.tryOrElse`, so the rest of your
+  code never needs `pcall`.
+
 See the [Result API](../../api/result/) for every function, and [Exhaustive matching](../exhaustive-matching/) for
 handling every error variant.

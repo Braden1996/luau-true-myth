@@ -60,4 +60,13 @@ local everyLevel = Maybe.all({ Maybe.of(a), Maybe.of(b) }) -- Just({ a, b }) onl
 `Maybe.get` exists because Luau types `map[key]` as the value type, never nil. Reading through `Maybe.get`
 puts the missing case back in the type.
 
+## When to use it
+
+- **At the edges.** Wrap values that may be missing where they enter your code: a lookup in a table, an API that
+  can return `nil`, an optional saved setting. Inside, pass plain values around.
+- **For "might not exist", not for "went wrong".** If you want to know _why_ something is missing, use a
+  [Result](../result/) with a typed error instead.
+- **Not for on/off flags.** A `Maybe<boolean>` has three states and reads badly. Use a boolean, or a union of
+  string tags such as `"enabled" | "disabled" | "unset"`.
+
 See the [Maybe API](../../api/maybe/) for every function.

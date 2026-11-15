@@ -72,4 +72,12 @@ caps any of them.
 `Task.all`, `Task.allSettled`, `Task.any` and `Task.race` combine lists of tasks. `Task.map`, `Task.andThen` and
 `Task.orElse` chain them, and the rejection types add up the way `Result.andThen`'s error types do.
 
+## When to use it
+
+- **For work that finishes later**: waiting on a game event, a timer, a reply from another addon or a server.
+- **Instead of nested callbacks.** `Task.async` and `Task.await` keep the steps in order, and every failure ends up
+  in the task's rejection type.
+- **Not for work that finishes immediately.** If you already have the answer, return a `Result`. `Task.fromResult`
+  turns one into a task when an API needs a task.
+
 See the [Task API](../../api/task/) and the [Delay API](../../api/delay/).

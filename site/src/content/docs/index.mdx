@@ -1,17 +1,17 @@
 ---
 title: luau-true-myth
-description: Maybe, Result and Task for strict Luau, a port of true-myth for Lune scripts and World of Warcraft addons (Lua 5.1).
+description: Safe handling of missing values, errors and async results in Luau, for Lune scripts and World of Warcraft addons.
 template: splash
 hero:
-  tagline: Optional values, errors and async results as typed values for strict Luau. Runs in Lune and, compiled to Lua 5.1, in World of Warcraft addons.
+  tagline: Safe handling of missing values, errors and async results in Luau. A port of true-myth for Lune scripts and World of Warcraft addons.
   image:
     file: ../../assets/logo.svg
   actions:
-    - text: Get started
-      link: start/install/
+    - text: Introduction
+      link: introduction/
       icon: right-arrow
-    - text: API reference
-      link: api/
+    - text: Tour
+      link: getting-started/tour/
       variant: minimal
     - text: GitHub
       link: https://github.com/Braden1996/luau-true-myth
@@ -21,44 +21,37 @@ hero:
 
 import { Card, CardGrid } from "@astrojs/starlight/components";
 
-```luau
---!strict
-local Result = require("./luau-true-myth/src/Result")
-
-type NotFound = { read kind: "NotFound", read id: number }
-
-local function findQuest(id: number): Result.Result<Quest, NotFound>
-	local quest = QUESTS[id]
-	if quest == nil then
-		return Result.err({ kind = "NotFound", id = id } :: NotFound)
-	end
-	return Result.ok(quest)
-end
-
-local found = findQuest(42)
-print(found.value)            -- error: Key 'value' is missing from 'Err<NotFound>'
-if found.kind == "Ok" then
-	print(found.value.title)  -- fine: narrowed to Ok<Quest>
-end
-found.value = nil             -- error: Property value of table 'Ok<Quest>' is read-only
-```
-
 <CardGrid stagger>
-  <Card title="Absence and failure in the types" icon="approve-check">
-    `Maybe<T>` says a value may be missing, `Result<T, E>` says an operation can fail and how, and
-    `Task<T, E>` is a `Result` that arrives later. The checker makes you handle each case before you
-    touch the value.
+  <Card title="Maybe" icon="seti:lua">
+    Better than `nil` everywhere. A value that might be missing says so, and the type checker makes
+    sure you handle it.
   </Card>
-  <Card title="Errors are values" icon="warning">
-    Failures are returned as tagged tables, so their types are part of the signature and compose:
-    `Result.andThen` unions the error types of each step.
+  <Card title="Result" icon="warning">
+    Treat errors like they matter. Failures are returned as values, and a function's type lists
+    what can go wrong.
   </Card>
-  <Card title="Exhaustive" icon="list-format">
-    `Result.match` requires both handlers, and `Exhaustive.casesHandled` makes any `if` chain over a
-    tagged union fail to type-check when a case is missing.
+  <Card title="Task" icon="rocket">
+    Results that arrive later, from events or timers, with errors you cannot lose. Built on Lua
+    coroutines, no promises needed.
   </Card>
-  <Card title="Plain data, two runtimes" icon="puzzle">
-    Values are read-only tables with no metatables, so they survive SavedVariables and JSON. The
-    same tests run against the Luau sources and the Lua 5.1 bundle.
+  <Card title="Made for Lua" icon="puzzle">
+    Plain tables you can save and load. The same code runs in Lune and, as Lua 5.1, in World of
+    Warcraft addons.
   </Card>
 </CardGrid>
+
+## Three everyday problems, one small library
+
+Most bugs in Lua code come from three places: using a value that turned out to be `nil`, forgetting that something
+can fail, and losing track of work that finishes later. luau-true-myth gives each one a type, so the type checker
+catches the mistake before the game or script does.
+
+```luau
+local found = findQuest(42)          -- Result<Quest, NotFound>
+print(found.value)                   -- type error: it might be a NotFound
+if found.kind == "Ok" then
+	print(found.value.title)         -- fine: this is the success case
+end
+```
+
+Read the [Introduction](introduction/) for why this helps, or take the [Tour](getting-started/tour/).
