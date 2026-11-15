@@ -26,6 +26,21 @@ Thanks for helping. Issues and pull requests are welcome, from one-line fixes to
 | `mise exec -- moon run repo:fmt lib:fmt`             | Format Markdown/JSON/YAML/TOML (dprint) and Luau (StyLua)            |
 | `mise exec -- lune run scripts/fixtures -- --update` | Rewrite the fixtures' `.expected` files after an intended change     |
 | `mise exec -- lune run scripts/banner`               | Regenerate `.github/banner.svg`                                      |
+| `mise exec -- moon run site:check`                   | The docs site: typecheck, lint, format, tests and build              |
+
+## The documentation site
+
+`site/` is an [Astro](https://astro.build) + [Starlight](https://starlight.astro.build) site deployed to GitHub
+Pages from `main`. Bun and Node come from `mise.toml`. In `site/`, `mise exec -- bun install` then `bun run dev`
+serves it locally.
+
+- **API pages** are generated from the `---` doc comments in `src/` (`site/src/lib/api/`). A test fails if a public
+  function has no doc comment.
+- **Design, guide, contributing and changelog pages** are copied from the repository's Markdown by
+  `site/scripts/sync-docs.ts`. Edit the originals.
+- **Guides** live in `site/src/content/docs/`.
+- TypeScript uses the strictest settings (TypeScript 7 `tsgo` plus `astro check`), and oxlint (type-aware) and oxfmt
+  check it. dprint formats the Markdown.
 
 ## Rules
 

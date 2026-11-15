@@ -4,4 +4,7 @@ extend-exclude = [
   "dist/",
   # luau-lsp's exact messages are recorded verbatim.
   "tests/fail/*.expected",
+  # The site's lockfile and generated output.
+  "site/bun.lock",
+  "site/dist/",
 ]

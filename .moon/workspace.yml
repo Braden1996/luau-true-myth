@@ -11,6 +11,7 @@ projects:
   repo: "."
   lib: "src"
   tests: "tests"
+  site: "site"
 
 vcs:
   client: "git"

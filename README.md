@@ -7,6 +7,7 @@
 </p>
 
 <p align="center">
+  <a href="https://braden1996.github.io/luau-true-myth/"><img alt="Docs" src="https://img.shields.io/badge/docs-braden1996.github.io-3d63dd"></a>
   <a href="https://github.com/Braden1996/luau-true-myth/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Braden1996/luau-true-myth/actions/workflows/ci.yml/badge.svg"></a>
   <a href="https://github.com/Braden1996/luau-true-myth/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/Braden1996/luau-true-myth?sort=semver"></a>
   <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
@@ -18,6 +19,9 @@
 checks you can forget or errors you can't see.** This is a port of [true-myth](https://github.com/true-myth/true-myth)
 to Luau. It is redesigned around plain tagged tables, and its types are checked under luau-lsp's new solver. It runs
 in [Lune](https://lune-org.github.io/docs) and, compiled to Lua 5.1, in World of Warcraft addons.
+
+**Documentation:** <https://braden1996.github.io/luau-true-myth/> (guides and an API reference generated from the
+source).
 
 ```luau
 --!strict

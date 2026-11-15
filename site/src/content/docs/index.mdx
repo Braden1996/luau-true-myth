@@ -1,0 +1,64 @@
+---
+title: luau-true-myth
+description: Maybe, Result and Task for strict Luau, a port of true-myth for Lune scripts and World of Warcraft addons (Lua 5.1).
+template: splash
+hero:
+  tagline: Optional values, errors and async results as typed values for strict Luau. Runs in Lune and, compiled to Lua 5.1, in World of Warcraft addons.
+  image:
+    file: ../../assets/logo.svg
+  actions:
+    - text: Get started
+      link: start/install/
+      icon: right-arrow
+    - text: API reference
+      link: api/
+      variant: minimal
+    - text: GitHub
+      link: https://github.com/Braden1996/luau-true-myth
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from "@astrojs/starlight/components";
+
+```luau
+--!strict
+local Result = require("./luau-true-myth/src/Result")
+
+type NotFound = { read kind: "NotFound", read id: number }
+
+local function findQuest(id: number): Result.Result<Quest, NotFound>
+	local quest = QUESTS[id]
+	if quest == nil then
+		return Result.err({ kind = "NotFound", id = id } :: NotFound)
+	end
+	return Result.ok(quest)
+end
+
+local found = findQuest(42)
+print(found.value)            -- error: Key 'value' is missing from 'Err<NotFound>'
+if found.kind == "Ok" then
+	print(found.value.title)  -- fine: narrowed to Ok<Quest>
+end
+found.value = nil             -- error: Property value of table 'Ok<Quest>' is read-only
+```
+
+<CardGrid stagger>
+  <Card title="Absence and failure in the types" icon="approve-check">
+    `Maybe<T>` says a value may be missing, `Result<T, E>` says an operation can fail and how, and
+    `Task<T, E>` is a `Result` that arrives later. The checker makes you handle each case before you
+    touch the value.
+  </Card>
+  <Card title="Errors are values" icon="warning">
+    Failures are returned as tagged tables, so their types are part of the signature and compose:
+    `Result.andThen` unions the error types of each step.
+  </Card>
+  <Card title="Exhaustive" icon="list-format">
+    `Result.match` requires both handlers, and `Exhaustive.casesHandled` makes any `if` chain over a
+    tagged union fail to type-check when a case is missing.
+  </Card>
+  <Card title="Plain data, two runtimes" icon="puzzle">
+    Values are read-only tables with no metatables, so they survive SavedVariables and JSON. The
+    same tests run against the Luau sources and the Lua 5.1 bundle.
+  </Card>
+</CardGrid>

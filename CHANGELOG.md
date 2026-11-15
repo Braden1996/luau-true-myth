@@ -5,6 +5,12 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- A documentation site on GitHub Pages (<https://braden1996.github.io/luau-true-myth/>): guides, an API reference
+  generated from the doc comments in `src/`, and the design notes and strict Luau guide. Astro and Starlight, with
+  strict TypeScript 7, oxlint and oxfmt, in `site/`.
+
 ## [0.1.0] - 2026-11-15
 
 ### Added

@@ -1,0 +1,64 @@
+$schema: "../.moon/cache/schemas/project.json"
+
+# Project `site`: the documentation site (Astro + Starlight, deployed to GitHub Pages by .github/workflows/pages.yml).
+# Bun and Node come from mise.toml; the tasks run from site/.
+layer: "application"
+tags: ["typescript", "docs"]
+
+taskOptions:
+  shell: false
+  runFromWorkspaceRoot: false
+
+tasks:
+  install:
+    description: "bun install from the lockfile (fails if package.json and bun.lock disagree)"
+    command: "bun"
+    args: ["install", "--frozen-lockfile"]
+    inputs: ["package.json", "bun.lock"]
+    options:
+      cache: false
+  typecheck:
+    description: "TypeScript 7 (tsgo) over every tsconfig project, then astro check"
+    command: "bun"
+    args: ["run", "typecheck"]
+    deps: ["~:install"]
+    options:
+      cache: false
+  lint:
+    description: "oxlint, type-aware, warnings are errors (oxlint.config.ts)"
+    command: "bun"
+    args: ["run", "lint"]
+    deps: ["~:install"]
+    options:
+      cache: false
+  fmt:
+    description: "Format TypeScript and Astro with oxfmt (oxfmt.config.ts)"
+    command: "bun"
+    args: ["run", "fmt"]
+    deps: ["~:install"]
+    options:
+      cache: false
+  fmt-check:
+    description: "oxfmt check (run `moon run site:fmt` to fix)"
+    command: "bun"
+    args: ["run", "fmt:check"]
+    deps: ["~:install"]
+    options:
+      cache: false
+  test:
+    description: "bun test: the doc-comment parser, and every library function is documented"
+    command: "bun"
+    args: ["test"]
+    deps: ["~:install"]
+    options:
+      cache: false
+  build:
+    description: "Build the static site into site/dist"
+    command: "bun"
+    args: ["run", "build"]
+    deps: ["~:install"]
+    options:
+      cache: false
+  check:
+    description: "Aggregator: every site check, and the site builds"
+    deps: ["~:typecheck", "~:lint", "~:fmt-check", "~:test", "~:build"]
