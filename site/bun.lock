@@ -9,6 +9,7 @@
         "astro": "7.4.12",
         "luau-web-checker": "https://github.com/Braden1996/luau-web-checker/releases/download/v0.4.0/luau-web-checker-0.4.0.tgz",
         "sharp": "0.35.5",
+        "starlight-luau": "0.1.0",
       },
       "devDependencies": {
         "@astrojs/check": "0.9.12",
@@ -852,6 +853,8 @@
     "source-map-js": ["source-map-js@1.2.2", "", {}, "sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw=="],
 
     "space-separated-tokens": ["space-separated-tokens@2.0.2", "", {}, "sha512-PEGlAwrG8yXGXRjW32fGbg66JAlOAwbObuqVoJpv/mRgoWDQfgH1wDPvtzWyUSNAXBGSk8h755YDbbcEy3SH2Q=="],
+
+    "starlight-luau": ["starlight-luau@0.1.0", "", { "peerDependencies": { "@astrojs/starlight": ">=0.43.0" } }, "sha512-dmAIZFVDBIiSoWI4Ak0uAnO5L52ImfcF3WoZ+D5+ENpcVs/BrSagZsfo1fXKVyI406vxVzC+yzWh/y5xGCK5zw=="],
 
     "std-env": ["std-env@4.3.0", "", {}, "sha512-OtU/EgQ1kIm5KwqQpBC6ZEMXrZRui11w8zgfTWp8cdO9B8OaPsbA8bTHO2P+HNo1VlUTGMVBwPhydu6poeXiag=="],
 

@@ -271,7 +271,8 @@ generics, and how this library's API is shaped around it.
   instantiation" errors, and luau-lsp sometimes segfaults, when the module is checked as a dependency of another
   file. Keep private plumbing non-generic (one private type with `any` payloads, written only by typed public
   functions), and give generic helpers distinct parameter names.
-- **Empty table literals have no element type.** `Result.all({})` is a type error; write
+- **Empty table literals have no element type.** `Result.all({})` is accepted, but its result is
+  unusable: narrowing or assigning it fails with "expected a Result, got unknown". Write
   `Result.all({} :: { Result<number, string> })`.
 - **`index<T, K>` cannot drive a typed `get`.** Generic `K` widens string literals to `string`. Type maps as
   `{ [K]: V }` instead.

@@ -1,5 +1,13 @@
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
+import starlightLuau from "starlight-luau";
+
+import {
+  API_MODULES,
+  PROSE_DIRECTORY,
+  SOURCE_DIRECTORY,
+  SPEC_PATTERN,
+} from "./src/lib/api-reference.ts";
 
 const repository = "https://github.com/Braden1996/luau-true-myth";
 
@@ -21,6 +29,17 @@ export default defineConfig({
       editLink: { baseUrl: `${repository}/edit/main/site/` },
       lastUpdated: true,
       customCss: ["./src/styles/theme.css"],
+      plugins: [
+        starlightLuau({
+          source: SOURCE_DIRECTORY,
+          modules: API_MODULES,
+          output: "api",
+          sidebar: false,
+          prose: PROSE_DIRECTORY,
+          examples: { patterns: [SPEC_PATTERN] },
+          sourceUrl: `${repository}/blob/main/src/{file}#L{line}`,
+        }),
+      ],
       sidebar: [
         {
           label: "Introduction",
@@ -43,15 +62,7 @@ export default defineConfig({
         },
         {
           label: "API reference",
-          items: [
-            { label: "Overview", link: "/api/" },
-            { label: "Maybe", link: "/api/maybe/" },
-            { label: "Result", link: "/api/result/" },
-            { label: "Task", link: "/api/task/" },
-            { label: "Delay", link: "/api/delay/" },
-            { label: "Toolbelt", link: "/api/toolbelt/" },
-            { label: "Exhaustive", link: "/api/exhaustive/" },
-          ],
+          items: [{ autogenerate: { directory: "api" } }],
         },
         {
           label: "Background",

@@ -34,8 +34,10 @@ Thanks for helping. Issues and pull requests are welcome, from one-line fixes to
 Pages from `main`. Bun and Node come from `mise.toml`. In `site/`, `mise exec -- bun install` then `bun run dev`
 serves it locally.
 
-- **API pages** are generated from the `---` doc comments in `src/` (`site/src/lib/api/`). A test fails if a public
-  function has no doc comment.
+- **API pages** are generated from the types in `src/` by [starlight-luau](https://github.com/Braden1996/starlight-luau),
+  with examples from `tests/spec/` and hand-written prose from `docs/api/` (`Result.md`, `Result/map.md`,
+  `Result/types/Ok.md`). A test fails if a public function has no prose file. The `luau-ast` tool it needs comes from
+  `mise.toml`.
 - **Design, guide, contributing and changelog pages** are copied from the repository's Markdown by
   `site/scripts/sync-docs.ts`. Edit the originals.
 - **Guides** live in `site/src/content/docs/`.
