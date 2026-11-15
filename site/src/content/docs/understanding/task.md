@@ -9,7 +9,10 @@ same code run in a WoW addon and in Lune.
 
 ## Create
 
-```luau
+```luau check
+type NotFound = { read kind: "NotFound", read id: number }
+type Task<T, E> = TrueMyth.Task<T, E>
+-- ---cut---
 local Task = TrueMyth.Task
 
 local function fetchQuest(id: number): Task<Quest, NotFound>
@@ -31,7 +34,13 @@ them.
 `Task.async(body)` runs `body` as a coroutine. Inside it, `Task.await(task)` suspends until the task settles and
 returns its `Result`:
 
-```luau
+```luau check
+type NotFound = { read kind: "NotFound", read id: number }
+type Result<T, E> = Result.Result<T, E>
+local function fetchQuest(id: number): Task.Task<Quest, NotFound>
+	return Task.reject({ kind = "NotFound", id = id } :: NotFound)
+end
+-- ---cut---
 local summary = Task.async(function(): Result<string, NotFound>
 	local quest = Task.await(fetchQuest(42))
 	if quest.kind == "Err" then
@@ -48,7 +57,13 @@ In Lua 5.1 (WoW) a coroutine cannot yield across `pcall`, so do not `Task.await`
 The host owns the clock, so time-based helpers take a `Schedule`, a function that runs a callback after a number
 of seconds:
 
-```luau
+```luau check
+type NotFound = { read kind: "NotFound", read id: number }
+type Task<T, E> = Task.Task<T, E>
+local function fetchQuest(id: number): Task.Task<Quest, NotFound>
+	return Task.reject({ kind = "NotFound", id = id } :: NotFound)
+end
+-- ---cut---
 local schedule = C_Timer.After                                  -- WoW
 local schedule = function(s: number, f: () -> ()) task.delay(s, f) end -- Lune
 

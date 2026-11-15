@@ -5,14 +5,17 @@ description: Maybe, Result and Task in five minutes.
 
 A quick look at the three types. Each has its own page under **Understanding** with the details.
 
-```luau
+The examples were type-checked against the library when this site was built. Hover a name to see the type Luau
+inferred for it.
+
+```luau check
 local TrueMyth = require("./vendor/luau-true-myth/src/TrueMyth")
 local Maybe, Result, Task = TrueMyth.Maybe, TrueMyth.Result, TrueMyth.Task
 ```
 
 ## Maybe: a value that might not be there
 
-```luau
+```luau check
 local target = Maybe.of(UnitName("target")) -- Just("Hogger") or Nothing
 
 local greeting = Maybe.match(target, {
@@ -29,7 +32,7 @@ You cannot get the name out without saying what happens when there is none. [Mor
 
 ## Result: an operation that can fail
 
-```luau
+```luau check
 type NotFound = { read kind: "NotFound", read id: number }
 
 local function findQuest(id: number): Result.Result<Quest, NotFound>
@@ -49,7 +52,12 @@ The failure is part of the function's type, so every caller knows it can happen.
 
 ## Task: a result that arrives later
 
-```luau
+```luau check
+type NotFound = { read kind: "NotFound", read id: number }
+local function fetchQuest(id: number): Task.Task<Quest, NotFound>
+	return Task.reject({ kind = "NotFound", id = id } :: NotFound)
+end
+-- ---cut---
 local summary = Task.async(function(): Result.Result<string, NotFound>
 	local quest = Task.await(fetchQuest(42))
 	if quest.kind == "Err" then
@@ -64,7 +72,11 @@ disappears. [More on Task](../../understanding/task/).
 
 ## Handling every case
 
-```luau
+```luau check
+type NotFound = { read kind: "NotFound", read id: number }
+type Invalid = { read kind: "Invalid", read reason: string }
+type LookupError = NotFound | Invalid
+-- ---cut---
 local function describe(e: LookupError): string
 	if e.kind == "NotFound" then
 		return "No quest " .. e.id

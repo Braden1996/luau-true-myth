@@ -7,8 +7,10 @@ Three things the new solver (luau-lsp 1.70.1) needs from your code.
 
 ## Annotate callback parameters that use operators
 
-```luau
-Result.map(r, function(n) return n + 1 end)          -- asks: "Consider placing the following annotations"
+```luau check
+local r: Result.Result<number, string> = Result.ok(1)
+-- ---cut---
+Result.map(r, function(n) return n + 1 end)          -- error: asks for "Consider placing the following annotations"
 Result.map(r, function(n: number) return n + 1 end)  -- fine
 ```
 
@@ -27,7 +29,7 @@ Result.all({} :: { Result<number, string> })   -- fine
 
 `Task.withResolvers` has no arguments to infer its types from, so name them with a cast. The cast is checked:
 
-```luau
+```luau check
 local deferred = Task.withResolvers() :: Task.Deferred<number, string>
 ```
 
