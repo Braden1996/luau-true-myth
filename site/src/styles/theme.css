@@ -1,0 +1,12 @@
+/* Starlight's palette, tuned to the README banner: blue accent, the banner's Ok green and Err red as asides. */
+:root {
+  --sl-color-accent-low: #131b3a;
+  --sl-color-accent: #3d63dd;
+  --sl-color-accent-high: #c9d1ff;
+}
+
+:root[data-theme="light"] {
+  --sl-color-accent-low: #dfe5ff;
+  --sl-color-accent: #3d63dd;
+  --sl-color-accent-high: #1b2a66;
+}

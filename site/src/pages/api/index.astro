@@ -1,0 +1,37 @@
+---
+// The API overview: every module with its description and function list, generated from ../src.
+import { LinkCard } from "@astrojs/starlight/components";
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+
+import { loadModules, modulePath } from "../../lib/api/modules.ts";
+
+const base = import.meta.env.BASE_URL.replace(/\/$/u, "");
+const modules = loadModules();
+const firstSentence = (text: string): string => /^[^.]*\./u.exec(text)?.[0] ?? text;
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "API reference",
+    description: "Every public module and function of luau-true-myth, from the doc comments in the source.",
+  }}
+>
+  <p>
+    Every function takes its data first: <code>Result.map(result, f)</code>. Signatures use
+    whole-type generics: <code>OkOf&lt;R&gt;</code>, <code>ErrOf&lt;R&gt;</code>,
+    <code>ValueOf&lt;M&gt;</code> and <code>ReasonOf&lt;K&gt;</code> read the payload types of the
+    argument's own type (see <a href={`${base}/project/design/`}>Design</a>). This reference is generated
+    from the doc comments in <code>src/</code>, which luau-lsp also shows on hover.
+  </p>
+  {
+    modules.map((module) => (
+      <LinkCard
+        title={`${module.name} (${module.functions.length})`}
+        description={`${firstSentence(module.description)} ${module.functions
+          .map((entry) => entry.name)
+          .join(" · ")}`}
+        href={`${base}${modulePath(module.name)}`}
+      />
+    ))
+  }
+</StarlightPage>
