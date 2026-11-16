@@ -23,7 +23,7 @@
     "astro": "7.4.12",
     "luau-web-checker": "https://github.com/Braden1996/luau-web-checker/releases/download/v0.4.0/luau-web-checker-0.4.0.tgz",
     "sharp": "0.35.5",
-    "starlight-luau": "0.1.0"
+    "starlight-luau": "0.2.0"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
