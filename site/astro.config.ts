@@ -37,7 +37,7 @@ export default defineConfig({
           sidebar: false,
           prose: PROSE_DIRECTORY,
           examples: { patterns: [SPEC_PATTERN] },
-          sourceUrl: `${repository}/blob/main/src/{file}#L{line}`,
+          sourceUrl: `${repository}/blob/main/packages/true-myth/src/{file}#L{line}`,
         }),
       ],
       sidebar: [

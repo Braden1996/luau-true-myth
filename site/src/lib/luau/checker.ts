@@ -32,7 +32,7 @@ export function docsChecker(): Promise<Checker> {
       },
       strict: true,
     });
-    const source = join(site, "..", "src");
+    const source = join(site, "..", "packages", "true-myth", "src");
     for (const file of readdirSync(source).filter(
       (name) => name.endsWith(".luau") && !name.includes(".spec."),
     )) {

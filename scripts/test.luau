@@ -1,26 +1,34 @@
 --!strict
--- Runs every spec in tests/spec against two builds of the library:
---   luau    the Luau sources (src/TrueMyth), as Lune scripts use them;
---   lua51   the darklua bundle (dist/TrueMyth.lua, from `scripts/build`), loaded in an environment that has only
---           Lua 5.1's standard library, as WoW addons use it.
--- Then checks API coverage: every public function of every module must be called by some spec.
--- Run with `lune run scripts/test` (after `lune run scripts/build`).
 
 local fs = require("@lune/fs")
 local luau = require("@lune/luau")
 local process = require("@lune/process")
 
-local Harness = require("../tests/harness")
-local Source = require("../src/TrueMyth")
+local Harness = require("../packages/test-harness/src/Harness")
+local Source = require("../packages/true-myth/src/TrueMyth")
 
 type Lib = typeof(Source)
-type Spec = (lib: Lib, t: Harness.T) -> ()
+type SpecModule = Harness.SpecModule<Lib>
+
+local function uncheckedLibraryTable(library: unknown): { [string]: any }
+	return library :: any
+end
+
+local function uncheckedModuleOf(lib: Lib, name: string): { [string]: any }
+	return (lib :: any)[name]
+end
+
+local function uncheckedAsLib(wrapped: { [string]: any }): Lib
+	return wrapped :: any
+end
+
+local function uncheckedRequireSpec(path: string): SpecModule
+	return (require :: any)(path)
+end
 
 local BUNDLE = "dist/TrueMyth.lua"
 local MODULES = { "Delay", "Exhaustive", "Maybe", "Result", "Task", "Toolbelt" }
 
--- Lua 5.1's standard library as WoW has it (no io, os, loadfile, dofile or debug). Luau-only additions such as
--- table.clone, table.find, string.split or table.freeze are deliberately absent, so a bundle that uses them fails.
 local LUA51_GLOBALS: { [string]: any } = {
 	assert = assert,
 	error = error,
@@ -43,11 +51,12 @@ local LUA51_GLOBALS: { [string]: any } = {
 }
 type Library = { source: { [string]: any }, names: { string } }
 local LUA51_LIBRARIES: { [string]: Library } = {
-	-- SAFETY: a standard library table read by the names below, which it has.
-	coroutine = { source = coroutine :: any, names = { "create", "resume", "running", "status", "wrap", "yield" } },
+	coroutine = {
+		source = uncheckedLibraryTable(coroutine),
+		names = { "create", "resume", "running", "status", "wrap", "yield" },
+	},
 	math = {
-		-- SAFETY: a standard library table read by the names below, which it has.
-		source = math :: any,
+		source = uncheckedLibraryTable(math),
 		names = {
 			"abs",
 			"acos",
@@ -82,8 +91,7 @@ local LUA51_LIBRARIES: { [string]: Library } = {
 		},
 	},
 	string = {
-		-- SAFETY: a standard library table read by the names below, which it has.
-		source = string :: any,
+		source = uncheckedLibraryTable(string),
 		names = {
 			"byte",
 			"char",
@@ -100,8 +108,7 @@ local LUA51_LIBRARIES: { [string]: Library } = {
 			"upper",
 		},
 	},
-	-- SAFETY: a standard library table read by the names below, which it has.
-	table = { source = table :: any, names = { "concat", "insert", "remove", "sort" } },
+	table = { source = uncheckedLibraryTable(table), names = { "concat", "insert", "remove", "sort" } },
 }
 
 local function lua51Environment(): { [string]: any }
@@ -117,7 +124,6 @@ local function lua51Environment(): { [string]: any }
 	return env
 end
 
--- Loads the Lua 5.1 bundle as WoW would: called with the addon name and namespace table.
 local function loadBundle(): (Lib, { [string]: any })
 	if not fs.isFile(BUNDLE) then
 		error(BUNDLE .. " is missing: run `lune run scripts/build` first", 0)
@@ -137,12 +143,10 @@ local function loadBundle(): (Lib, { [string]: any })
 	return returned, namespace
 end
 
--- Wraps each module so reads of its functions are recorded in `used`.
 local function instrument(lib: Lib, used: { [string]: true }): Lib
 	local wrapped: { [string]: any } = { version = lib.version }
 	for _, name in MODULES do
-		-- SAFETY: `name` is one of MODULES, each a key of `lib`; the module is read dynamically by name.
-		local module = (lib :: any)[name]
+		local module = uncheckedModuleOf(lib, name)
 		wrapped[name] = setmetatable({}, {
 			__index = function(_, key: string): any
 				used[name .. "." .. key] = true
@@ -150,12 +154,11 @@ local function instrument(lib: Lib, used: { [string]: true }): Lib
 			end,
 		})
 	end
-	-- SAFETY: same keys as `lib`, each module replaced by a read-through proxy.
-	return wrapped :: any
+	return uncheckedAsLib(wrapped)
 end
 
 local specFiles = {}
-for _, entry in fs.readDir("tests/spec") do
+for _, entry in fs.readDir("packages/true-myth/src") do
 	if string.match(entry, "%.spec%.luau$") then
 		table.insert(specFiles, entry)
 	end
@@ -175,9 +178,8 @@ end
 for _, build in builds do
 	local report: Harness.Report = { passed = 0, failed = {} }
 	for _, file in specFiles do
-		-- SAFETY: a dynamic path to a spec file, whose shape every spec declares (`return function(lib, t)`).
-		local spec = (require :: any)("../tests/spec/" .. string.gsub(file, "%.luau$", "")) :: Spec
-		spec(instrument(build.lib, used), Harness.context(report, build.name .. " " .. file))
+		local spec = uncheckedRequireSpec("../packages/true-myth/src/" .. string.gsub(file, "%.luau$", ""))
+		spec.suite(instrument(build.lib, used), Harness.context(report, build.name .. " " .. file))
 	end
 	for _, failure in report.failed do
 		table.insert(failures, failure)
@@ -197,11 +199,9 @@ if Source.version ~= (if ok then bundle.version else Source.version) then
 	table.insert(failures, "the bundle's version differs from the sources'")
 end
 
--- Coverage: every function each module exports must be read by some spec.
 local missing = {}
 for _, name in MODULES do
-	-- SAFETY: `name` is one of MODULES, each a module table of the library.
-	for key, value in (Source :: any)[name] do
+	for key, value in uncheckedModuleOf(Source, name) do
 		if type(value) == "function" and not used[name .. "." .. key] then
 			table.insert(missing, name .. "." .. key)
 		end

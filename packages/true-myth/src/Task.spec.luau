@@ -1,12 +1,12 @@
 --!strict
-local Harness = require("../harness")
-local Types = require("../../src/TrueMyth") -- types only: the spec uses `lib`, the build under test
+local Harness = require("@luau-true-myth/test-harness/Harness")
+local Types = require("./TrueMyth")
 
 type Lib = typeof(Types)
 type Task<T, E> = Types.Task<T, E>
 type Result<T, E> = Types.Result<T, E>
 
-return function(lib: Lib, t: Harness.T)
+return Harness.spec(Types, function(lib: Lib, t: Harness.T)
 	local Task, Result, Delay = lib.Task, lib.Result, lib.Delay
 
 	local function deferred(): (Task<number, string>, (number) -> (), (string) -> ())
@@ -313,4 +313,4 @@ return function(lib: Lib, t: Harness.T)
 			end, { strategy = Delay.fixed(1) })
 		end, "needs options.schedule")
 	end)
-end
+end)

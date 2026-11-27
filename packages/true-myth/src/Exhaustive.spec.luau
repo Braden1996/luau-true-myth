@@ -1,13 +1,17 @@
 --!strict
-local Harness = require("../harness")
-local Types = require("../../src/TrueMyth") -- types only: the spec uses `lib`, the build under test
+local Harness = require("@luau-true-myth/test-harness/Harness")
+local Types = require("./TrueMyth")
 
 type Lib = typeof(Types)
 type Result<T, E> = Types.Result<T, E>
 
 type Shape = { read kind: "Circle", read radius: number } | { read kind: "Square", read side: number }
 
-return function(lib: Lib, t: Harness.T)
+local function uncheckedShape(value: unknown): Shape
+	return value :: any
+end
+
+return Harness.spec(Types, function(lib: Lib, t: Harness.T)
 	local Exhaustive = lib.Exhaustive
 
 	local function area(shape: Shape): number
@@ -26,8 +30,7 @@ return function(lib: Lib, t: Harness.T)
 
 	t.test("reaching casesHandled at run time is a defect", function()
 		t.raises(function()
-			-- SAFETY: deliberately lies to the type checker to simulate data from outside the type system.
-			area({ kind = "Triangle" } :: any)
+			area(uncheckedShape({ kind = "Triangle" }))
 		end, "Exhaustive.casesHandled: unhandled case")
 	end)
-end
+end)

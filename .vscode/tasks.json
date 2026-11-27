@@ -2,37 +2,30 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "check (everything CI runs)",
+      "label": "check (Sergeant gate)",
       "type": "shell",
-      "command": "mise exec -- moon run :check",
+      "command": "mise exec -- sgt check",
       "group": { "kind": "test", "isDefault": true },
       "problemMatcher": []
     },
     {
-      "label": "spec (Luau and Lua 5.1)",
+      "label": "test (LuaJIT specs)",
       "type": "shell",
-      "command": "mise exec -- moon run tests:spec",
+      "command": "mise exec -- sgt test",
       "group": "test",
       "problemMatcher": []
     },
     {
-      "label": "fixtures (type errors)",
+      "label": "build Lua 5.1 bundle",
       "type": "shell",
-      "command": "mise exec -- moon run tests:fixtures",
-      "group": "test",
-      "problemMatcher": []
-    },
-    {
-      "label": "build dist/TrueMyth.lua",
-      "type": "shell",
-      "command": "mise exec -- moon run lib:build",
+      "command": "mise exec -- sgt run build",
       "group": "build",
       "problemMatcher": []
     },
     {
-      "label": "format",
+      "label": "format everything",
       "type": "shell",
-      "command": "mise exec -- moon run repo:fmt lib:fmt",
+      "command": "mise exec -- sgt fmt",
       "problemMatcher": []
     }
   ]

@@ -1,12 +1,9 @@
 --!strict
--- Draws .github/banner.svg: a branching emblem (one value, two typed outcomes), the wordmark, a line of typed code
--- and live numbers read from the library itself, so the banner never disagrees with the code.
--- `lune run scripts/banner` writes it; `-- --check` fails if the committed file differs.
 
 local fs = require("@lune/fs")
 local process = require("@lune/process")
 
-local TrueMyth = require("../src/TrueMyth")
+local TrueMyth = require("../packages/true-myth/src/TrueMyth")
 
 local OUTPUT = ".github/banner.svg"
 local MODULES = { "Delay", "Exhaustive", "Maybe", "Result", "Task", "Toolbelt" }
@@ -50,10 +47,14 @@ end
 local MONO = "'JetBrains Mono','Cascadia Code',Consolas,monospace"
 local SANS = "'Segoe UI','Inter','Helvetica Neue',Arial,sans-serif"
 
+local function uncheckedModuleOf(name: string): { [string]: any }
+	return (TrueMyth :: any)[name]
+end
+
 local function svg(): string
 	local functions = 0
 	for _, name in MODULES do
-		for _, value in (TrueMyth :: any)[name] do -- SAFETY: each name is a module table of the library.
+		for _, value in uncheckedModuleOf(name) do
 			if type(value) == "function" then
 				functions += 1
 			end
@@ -77,7 +78,6 @@ local function svg(): string
 		"  " .. el("rect", { width = 1280, height = 400, fill = "url(#dots)" }),
 	}
 
-	-- Emblem: one value branching into two typed outcomes.
 	local emblem = {
 		el("path", {
 			d = "M120 200 C 200 200, 220 110, 300 110",
@@ -128,7 +128,6 @@ local function svg(): string
 		table.insert(lines, "  " .. part)
 	end
 
-	-- Wordmark and tagline.
 	table.insert(lines, "  " .. el("text", {
 		x = 440,
 		y = 150,
@@ -148,7 +147,6 @@ local function svg(): string
 			)
 	)
 
-	-- A typed line of code, syntax-coloured.
 	local tokens = {
 		{ "local", "#c678dd" },
 		{ " quest", "#e6edf3" },
@@ -183,7 +181,6 @@ local function svg(): string
 		"  " .. el("text", { x = 464, y = 263, ["font-family"] = MONO, ["font-size"] = 22 }, table.concat(spans))
 	)
 
-	-- Live numbers.
 	local stats = string.format(
 		"v%s  ·  %d functions  ·  --!strict on the new solver  ·  ships as Lua 5.1",
 		TrueMyth.version,

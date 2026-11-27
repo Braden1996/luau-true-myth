@@ -1,11 +1,11 @@
 --!strict
-local Harness = require("../harness")
-local Types = require("../../src/TrueMyth") -- types only: the spec uses `lib`, the build under test
+local Harness = require("@luau-true-myth/test-harness/Harness")
+local Types = require("./TrueMyth")
 
 type Lib = typeof(Types)
 type Maybe<T> = Types.Maybe<T>
 
-return function(lib: Lib, t: Harness.T)
+return Harness.spec(Types, function(lib: Lib, t: Harness.T)
 	local Maybe = lib.Maybe
 
 	t.test("just, nothing and of build tagged tables", function()
@@ -208,4 +208,4 @@ return function(lib: Lib, t: Harness.T)
 		t.equal(lookup("a"), Maybe.just(1))
 		t.equal(lookup("b"), Maybe.nothing())
 	end)
-end
+end)

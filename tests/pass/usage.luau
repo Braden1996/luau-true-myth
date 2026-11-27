@@ -1,6 +1,5 @@
 --!strict
--- Positive fixture: idiomatic use must type-check with zero diagnostics (new solver), with no casts in user code.
-local TrueMyth = require("../../src/TrueMyth")
+local TrueMyth = require("../../packages/true-myth/src/TrueMyth")
 
 local Maybe, Result, Task, Toolbelt = TrueMyth.Maybe, TrueMyth.Result, TrueMyth.Task, TrueMyth.Toolbelt
 
@@ -8,7 +7,6 @@ type Maybe<T> = TrueMyth.Maybe<T>
 type Result<T, E> = TrueMyth.Result<T, E>
 type Task<T, E> = TrueMyth.Task<T, E>
 
--- Tagged errors with literal kinds, matched exhaustively.
 type NotFound = { read kind: "NotFound", read id: number }
 type Invalid = { read kind: "Invalid", read reason: string }
 type LookupError = NotFound | Invalid
@@ -32,7 +30,6 @@ end
 local title: string = Result.mapOrElse(findQuest(1), describe, string.upper)
 local length: number = Result.unwrapOr(Result.map(findQuest(2), string.len), 0)
 
--- Narrowing on `kind`.
 local found = findQuest(1)
 if found.kind == "Ok" then
 	local _t: string = found.value
@@ -40,7 +37,6 @@ else
 	local _e: LookupError = found.error
 end
 
--- Maybe from nilable values; the element type has nil removed.
 local maybeLevel: number? = nil
 local level: Maybe<number> = Maybe.of(maybeLevel)
 local next: Maybe<number> = Maybe.map(level, function(n: number): number
@@ -55,7 +51,6 @@ local shown: string = Maybe.match(next, {
 	end,
 })
 
--- Ok and Err need no annotations to fit any Result.
 local function safeDivide(a: number, b: number): Result<number, "DivideByZero">
 	if b == 0 then
 		return Result.err("DivideByZero")
@@ -64,7 +59,6 @@ local function safeDivide(a: number, b: number): Result<number, "DivideByZero">
 end
 local all: Result<{ number }, "DivideByZero"> = Result.all({ safeDivide(1, 2), safeDivide(3, 4) })
 
--- Tasks: async/await with Results, and combinators.
 local deferred = Task.withResolvers() :: TrueMyth.Deferred<number, string>
 local doubled: Task<number, string> = Task.map(deferred.task, function(n: number): number
 	return n * 2

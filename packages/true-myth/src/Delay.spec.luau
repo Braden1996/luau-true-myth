@@ -1,10 +1,10 @@
 --!strict
-local Harness = require("../harness")
-local Types = require("../../src/TrueMyth") -- types only: the spec uses `lib`, the build under test
+local Harness = require("@luau-true-myth/test-harness/Harness")
+local Types = require("./TrueMyth")
 
 type Lib = typeof(Types)
 
-return function(lib: Lib, t: Harness.T)
+return Harness.spec(Types, function(lib: Lib, t: Harness.T)
 	local Delay = lib.Delay
 
 	local function collect(strategy: Types.Strategy, count: number): { number }
@@ -73,4 +73,4 @@ return function(lib: Lib, t: Harness.T)
 		a()
 		t.equal(b(), 1)
 	end)
-end
+end)

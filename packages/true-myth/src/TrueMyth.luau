@@ -1,13 +1,4 @@
 --!strict
---[[
-	luau-true-myth: safe, idiomatic optional values, results and tasks for strict Luau.
-
-	Require a single module (`require("./TrueMyth/Result")`) or this entry point for all of them. The types are
-	re-exported here: `TrueMyth.Maybe<T>`, `TrueMyth.Result<T, E>`, `TrueMyth.Task<T, E>`.
-
-	Ported from true-myth (MIT, Chris Krycho and contributors): https://github.com/true-myth/true-myth
-]]
-
 local Delay = require("./Delay")
 local Exhaustive = require("./Exhaustive")
 local Maybe = require("./Maybe")
@@ -31,8 +22,7 @@ export type RetryOptions<E> = Task.RetryOptions<E>
 export type Strategy = Delay.Strategy
 
 return {
-	--- The library version, matching the git tag without its `v`.
-	version = "0.1.0",
+	version = "0.2.0",
 	Delay = Delay,
 	Exhaustive = Exhaustive,
 	Maybe = Maybe,

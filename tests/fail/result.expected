@@ -1,8 +1,8 @@
-23:16: TypeError: Key 'error' is missing from 'Ok<string>' in the type 'Err<Invalid | NotFound | Timeout> | Ok<string>'
-25:19: TypeError: Key 'error' not found in table 'Ok<string>'
-30:2: TypeError: Expected this to be 'Err<Invalid | NotFound | Timeout> | Ok<string>', but got 'Err<string>'; 
+21:16: TypeError: Key 'error' is missing from 'Ok<string>' in the type 'Err<Invalid | NotFound | Timeout> | Ok<string>'
+23:19: TypeError: Key 'error' not found in table 'Ok<string>'
+27:2: TypeError: Expected this to be 'Err<Invalid | NotFound | Timeout> | Ok<string>', but got 'Err<string>'; 
 Expected the 1st type pack entry to be `Err<Invalid | NotFound | Timeout> | Ok<string>`, but got `Err<string>`
-34:32: TypeError: Expected this to be
+30:32: TypeError: Expected this to be
 	'({ read id: number, read kind: "NotFound" } | { read kind: "Invalid", read reason: string } | { read kind: "Timeout" }) -> string'
 but got
 	'(string) -> string'; 
@@ -10,5 +10,5 @@ this is because
 	 * Expected the 1st parameter to be a supertype of `{ read id: number, read kind: "NotFound" }`, but got `string`
 	 * Expected the 1st parameter to be a supertype of `{ read kind: "Invalid", read reason: string }`, but got `string`
 	 * Expected the 1st parameter to be a supertype of `{ read kind: "Timeout" }`, but got `string`
-45:33: TypeError: Expected this to be unreachable, but got 'Timeout'
-50:2: TypeError: Property value of table 'Ok<number>' is read-only
+40:33: TypeError: Expected this to be unreachable, but got 'Timeout'
+44:2: TypeError: Property value of table 'Ok<number>' is read-only

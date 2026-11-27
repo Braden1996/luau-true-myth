@@ -78,7 +78,22 @@ found.value = nil                       -- error: Property value of table 'Ok<Qu
 
 The library is the `src/` folder: Luau modules with no dependencies.
 
-**Lune and other Luau projects:** copy `src/` from a [release](https://github.com/Braden1996/luau-true-myth/releases/latest)
+**With [woof](https://github.com/Braden1996/woof) (recommended):** add to `woof.toml` and run `woof install` (or `sgt install` with [Sergeant](https://github.com/Braden1996/sergeant)'s `"woof"` plugin):
+
+```toml
+[dependencies]
+truemyth = { github = "Braden1996/luau-true-myth", tag = "v0.2.0", asset = "luau-true-myth-0.2.0.zip", subpath = "src" }
+```
+
+Then require modules directly via `@truemyth`:
+
+```luau
+local TrueMyth = require("@truemyth/TrueMyth")
+local Maybe, Result, Task = TrueMyth.Maybe, TrueMyth.Result, TrueMyth.Task
+type Result<T, E> = TrueMyth.Result<T, E>
+```
+
+**Lune and other Luau projects (manual):** copy `src/` from a [release](https://github.com/Braden1996/luau-true-myth/releases/latest)
 (`luau-true-myth-<version>.zip`) or add the repository as a git submodule, then require a module or the entry point:
 
 ```luau
@@ -214,7 +229,7 @@ Every function takes its data first. Signatures are abbreviated: `OkOf<R>`, `Err
 | `Toolbelt`   | `toMaybe` `toOkOrErr` `toOkOrElseErr` `transposeResult` `transposeMaybe`                                                                                                                                                                                                                            |
 | `Exhaustive` | `casesHandled`                                                                                                                                                                                                                                                                                      |
 
-Each function has a doc comment that luau-lsp shows on hover. The [specs](tests/spec) show every function in use.
+Each module has a colocated spec (for example [`packages/true-myth/src/Result.spec.luau`](packages/true-myth/src/Result.spec.luau)) that shows every function in use; the [API reference](https://braden1996.github.io/luau-true-myth/api/) is generated from the types, with those specs as examples.
 
 ## Design and differences from true-myth
 
@@ -224,15 +239,16 @@ follows, and how each is enforced, are in the [strict Luau guide](docs/strict-lu
 
 ## Development
 
-[mise](https://mise.jdx.dev) pins every tool (moon, Lune, luau-lsp, StyLua, selene, darklua, typos, actionlint,
-dprint, lychee, lefthook). `mise exec -- moon run :check` runs exactly what CI runs:
+[Sergeant](https://github.com/Braden1996/sergeant) (`sgt`) orchestrates checks, tests, and commands, and
+[mise](https://mise.jdx.dev) pins every tool (`sgt`, `woof`, Lune, luau-lsp, StyLua, selene, darklua, typos,
+actionlint, zizmor, lychee, lefthook). `mise exec -- sgt check` and `mise exec -- sgt test` run the core gate:
 
-- type-checking on the new solver;
+- type-checking on the new solver with strict Lua 5.1 static analysis (`target: "lua51"`);
 - the custom lint, selene and StyLua;
 - the Lua 5.1 bundle build and its freshness;
-- the specs on both runtimes with API coverage;
-- the type fixtures;
-- spelling, links, workflow lint and formatting.
+- fast symbol-cached specs on LuaJIT (`sgt test`) plus Lua 5.1 sandboxed bundle coverage (`sgt run bundle-specs`);
+- the type fixtures (`sgt run fixtures`);
+- spelling, links, workflow lint, security audit, and formatting.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 

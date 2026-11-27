@@ -1,7 +1,7 @@
-11:1: TypeError: Property state of table 'Task<number, string>' is read-only
-14:18: TypeError: Expected this to be 'number', but got 'string'
-19:21: TypeError: Key 'value' is missing from 'Err<string>' in the type 'Err<string> | Ok<number>'
-25:43: TypeError: Expected this to be
+8:1: TypeError: Property state of table 'Task<number, string>' is read-only
+10:18: TypeError: Expected this to be 'number', but got 'string'
+14:21: TypeError: Key 'value' is missing from 'Err<string>' in the type 'Err<string> | Ok<number>'
+19:43: TypeError: Expected this to be
 	'Task<number, string>'
 but got
 	'Task<number, Timeout | string>'; 

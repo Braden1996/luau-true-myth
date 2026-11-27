@@ -1,0 +1,10 @@
+{
+  "ignorePatterns": [
+    ".build/**",
+    ".sergeant/**",
+    "luau_packages/**",
+    "dist/**",
+    "mise.lock",
+    "site/**",
+  ],
+}

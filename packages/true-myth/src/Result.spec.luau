@@ -1,11 +1,11 @@
 --!strict
-local Harness = require("../harness")
-local Types = require("../../src/TrueMyth") -- types only: the spec uses `lib`, the build under test
+local Harness = require("@luau-true-myth/test-harness/Harness")
+local Types = require("./TrueMyth")
 
 type Lib = typeof(Types)
 type Result<T, E> = Types.Result<T, E>
 
-return function(lib: Lib, t: Harness.T)
+return Harness.spec(Types, function(lib: Lib, t: Harness.T)
 	local Result = lib.Result
 
 	local function parse(text: string): Result<number, string>
@@ -201,4 +201,4 @@ return function(lib: Lib, t: Harness.T)
 		t.equal(divide(6, 3), Result.ok(2))
 		t.equal(divide(1, 0), Result.err("division by zero"))
 	end)
-end
+end)

@@ -1,68 +1,43 @@
 --!strict
--- Type-checks the fixtures with luau-lsp on Luau's new solver, one file at a time (as a consumer would see them):
---   tests/pass/*.luau   zero diagnostics, in the fixture or in the library it requires;
---   tests/fail/*.luau   the diagnostics must equal tests/fail/<name>.expected exactly (line, column and full
---                       message), every line marked `-- expect-error: <text>` must have an error containing <text>,
---                       and no unmarked line may have one.
--- `lune run scripts/fixtures -- --update` rewrites the .expected files; review the diff.
 
 local fs = require("@lune/fs")
 local process = require("@lune/process")
 
-local update = table.find(process.args, "--update") ~= nil
+local Diagnostics = require("./fixtures/diagnostics")
 
-type Diagnostic = { file: string, line: number, column: number, text: string }
+type Diagnostic = Diagnostics.Diagnostic
 
-local function listFiles(dir: string, suffix: string): { string }
-	local out = {}
-	for _, entry in fs.readDir(dir) do
-		if string.sub(entry, -#suffix) == suffix then
-			table.insert(out, dir .. "/" .. entry)
+local updateExpectations = table.find(process.args, "--update") ~= nil
+
+local function luauFilesIn(directory: string): { string }
+	local files = {}
+	for _, entry in fs.readDir(directory) do
+		if string.match(entry, "%.luau$") then
+			table.insert(files, directory .. "/" .. entry)
 		end
 	end
-	table.sort(out)
-	return out
+	table.sort(files)
+	return files
 end
 
--- Runs luau-lsp analyze on one file; returns its diagnostics (multi-line messages joined) or raises on a crash.
 local function analyze(file: string): { Diagnostic }
 	local result = process.exec(
 		"luau-lsp",
 		{ "analyze", "--platform=standard", "--flag:LuauSolverV2=true", "--base-luaurc=.luaurc", file }
 	)
-	local output = string.gsub(result.stdout .. "\n" .. result.stderr, "\r", "")
+	local output = result.stdout .. "\n" .. result.stderr
 	if not result.ok and result.code ~= 1 then
 		print(output)
 		error(file .. ": luau-lsp exited with code " .. result.code, 0)
 	end
-	local diagnostics: { Diagnostic } = {}
-	local current: Diagnostic? = nil
-	for line in string.gmatch(output, "[^\n]+") do
-		local path, lineNo, column, text = string.match(line, "^(.-)%((%d+),(%d+)%): (.*)$")
-		if path and lineNo and column and text then
-			local entry: Diagnostic = {
-				file = (string.gsub(path, "\\", "/")),
-				line = tonumber(lineNo) :: number,
-				column = tonumber(column) :: number,
-				text = text,
-			}
-			current = entry
-			table.insert(diagnostics, entry)
-		elseif current and not string.match(line, "^%[") then
-			current.text ..= "\n" .. line
-		end
+	return Diagnostics.parse(output)
+end
+
+local function readExpected(path: string): string?
+	if not fs.isFile(path) then
+		return nil
 	end
-	table.sort(diagnostics, function(a: Diagnostic, b: Diagnostic): boolean
-		if a.file ~= b.file then
-			return a.file < b.file
-		elseif a.line ~= b.line then
-			return a.line < b.line
-		elseif a.column ~= b.column then
-			return a.column < b.column
-		end
-		return a.text < b.text
-	end)
-	return diagnostics
+	return (string.gsub(fs.readFile(path), "\r\n", "\n"))
 end
 
 local failures = 0
@@ -71,73 +46,63 @@ local function fail(message: string)
 	print("FAIL " .. message)
 end
 
-for _, file in listFiles("tests/pass", ".luau") do
+local function checkPassingFixture(file: string)
 	local diagnostics = analyze(file)
-	for _, d in diagnostics do
-		fail(string.format("%s:%d:%d: unexpected diagnostic: %s", d.file, d.line, d.column, d.text))
+	for _, diagnostic in diagnostics do
+		fail(
+			string.format(
+				"%s:%d:%d: unexpected diagnostic: %s",
+				diagnostic.file,
+				diagnostic.line,
+				diagnostic.column,
+				diagnostic.text
+			)
+		)
 	end
 	print(string.format("%s %s", if #diagnostics == 0 then "ok  " else "FAIL", file))
 end
 
-for _, file in listFiles("tests/fail", ".luau") do
+local function checkFailingFixture(file: string)
+	local failuresBefore = failures
 	local diagnostics = analyze(file)
-	local lines = {}
-	for _, d in diagnostics do
-		if d.file ~= file then
-			fail(string.format("%s: a diagnostic in the library: %s:%d: %s", file, d.file, d.line, d.text))
+	for _, diagnostic in diagnostics do
+		if diagnostic.file ~= file then
+			fail(string.format("%s: a diagnostic in the library: %s:%d", file, diagnostic.file, diagnostic.line))
 		end
-		table.insert(lines, string.format("%d:%d: %s", d.line, d.column, d.text))
 	end
-	local actual = table.concat(lines, "\n") .. "\n"
+
+	local actual = Diagnostics.render(diagnostics)
 	local expectedPath = string.gsub(file, "%.luau$", ".expected")
-	local ok = true
-	if update then
+	if updateExpectations then
 		fs.writeFile(expectedPath, actual)
-	else
-		local expected = if fs.isFile(expectedPath) then string.gsub(fs.readFile(expectedPath), "\r\n", "\n") else nil
-		if expected ~= actual then
-			ok = false
-			fail(file .. ": diagnostics differ from " .. expectedPath .. ". Actual:\n" .. actual)
-		end
+	elseif readExpected(expectedPath) ~= actual then
+		fail(file .. ": diagnostics differ from " .. expectedPath .. ". Actual:\n" .. actual)
 	end
-	local sourceLines = string.split(string.gsub(fs.readFile(file), "\r", ""), "\n")
-	local byLine: { [number]: { string } } = {}
-	for _, d in diagnostics do
-		byLine[d.line] = byLine[d.line] or {}
-		table.insert(byLine[d.line], d.text)
+
+	local markers = Diagnostics.markers(fs.readFile(file))
+	for _, marker in Diagnostics.unmatchedMarkers(markers, diagnostics) do
+		fail(string.format("%s:%d: expected an error containing %q", file, marker.line, marker.phrase))
 	end
-	local marked = 0
-	for lineNo, line in sourceLines do
-		local phrase = string.match(line, "%-%- expect%-error: (.-)%s*$")
-		if phrase then
-			marked += 1
-			local found = false
-			for _, text in byLine[lineNo] or {} do
-				if string.find(text, phrase, 1, true) then
-					found = true
-				end
-			end
-			if not found then
-				ok = false
-				fail(string.format("%s:%d: expected an error containing %q", file, lineNo, phrase))
-			end
-		end
+	for _, line in Diagnostics.unmarkedLines(markers, diagnostics) do
+		fail(string.format("%s:%d: a diagnostic on a line not marked expect-error", file, line))
 	end
-	for lineNo in byLine do
-		if not string.find(sourceLines[lineNo] or "", "expect-error:", 1, true) then
-			ok = false
-			fail(string.format("%s:%d: a diagnostic on a line not marked expect-error", file, lineNo))
-		end
-	end
+
 	print(
 		string.format(
 			"%s %s (%d diagnostics, %d marked lines)",
-			if ok then "ok  " else "FAIL",
+			if failures == failuresBefore then "ok  " else "FAIL",
 			file,
 			#diagnostics,
-			marked
+			#markers
 		)
 	)
+end
+
+for _, file in luauFilesIn("tests/pass") do
+	checkPassingFixture(file)
+end
+for _, file in luauFilesIn("tests/fail") do
+	checkFailingFixture(file)
 end
 
 if failures > 0 then

@@ -1,0 +1,5 @@
+{
+  "name": "@luau-true-myth/true-myth",
+  "kind": "luau:pure",
+  "devDependencies": ["@luau-true-myth/test-harness"],
+}

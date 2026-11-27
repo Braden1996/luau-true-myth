@@ -1,12 +1,12 @@
 --!strict
-local Harness = require("../harness")
-local Types = require("../../src/TrueMyth") -- types only: the spec uses `lib`, the build under test
+local Harness = require("@luau-true-myth/test-harness/Harness")
+local Types = require("./TrueMyth")
 
 type Lib = typeof(Types)
 type Maybe<T> = Types.Maybe<T>
 type Result<T, E> = Types.Result<T, E>
 
-return function(lib: Lib, t: Harness.T)
+return Harness.spec(Types, function(lib: Lib, t: Harness.T)
 	local Maybe, Result, Toolbelt = lib.Maybe, lib.Result, lib.Toolbelt
 
 	t.test("toMaybe drops the error", function()
@@ -53,8 +53,8 @@ return function(lib: Lib, t: Harness.T)
 			Result.ok(Maybe.nothing()),
 			Result.err("e"),
 		}
-		for _, value in values do
+		for _, value in ipairs(values) do
 			t.equal(Toolbelt.transposeMaybe(Toolbelt.transposeResult(value)), value)
 		end
 	end)
-end
+end)

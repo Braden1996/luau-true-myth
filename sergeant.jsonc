@@ -1,0 +1,116 @@
+{
+  "$schema": "./.sergeant/schema.json",
+  "plugins": ["luau", "lune", "woof", "actionlint", "zizmor", "lychee"],
+  "packages": ["packages/*"],
+  "luau": {
+    "target": "lua51",
+    "runtime": "luajit",
+    "forbidLuauStdlib": true,
+    "strictLints": true,
+  },
+  "cache": {
+    "untrackable": "degrade",
+  },
+  "boundaries": {
+    "noUnitCycles": true,
+  },
+  "check": {
+    "woof-lint": {
+      "description": "Audit woof.toml manifest hygiene",
+      "cache": true,
+      "inputs": ["woof.toml", "packages/true-myth/src/TrueMyth.luau"],
+      "env": ["WOOF_STORE_DIR=.woof-store"],
+      "run": ["woof", "lint"],
+    },
+    "strict-lint": {
+      "description": "Enforce --!strict, names-over-comments, unchecked* casts, and Lua 5.1 discipline",
+      "cache": true,
+      "inputs": ["packages/**/*.luau", "wow/**/*.luau", "scripts/**/*.luau", "tests/**/*.luau"],
+      "run": ["lune", "run", "scripts/lint"],
+    },
+    "scripts-lint": {
+      "description": "Lint scripts, wow entry, and tests with Selene",
+      "cache": true,
+      "inputs": ["wow/**/*.luau", "scripts/**/*.luau", "tests/**/*.luau", "selene.toml", "*.yml"],
+      "run": ["selene", "wow", "scripts", "tests"],
+    },
+    "scripts-fmt": {
+      "description": "Verify StyLua formatting on wow entry, scripts, and tests",
+      "cache": true,
+      "inputs": [
+        "wow/**/*.luau",
+        "scripts/**/*.luau",
+        "tests/**/*.luau",
+        "stylua.toml",
+        ".styluaignore",
+      ],
+      "run": ["stylua", "--check", "wow", "scripts", "tests"],
+    },
+    "tooling-specs": {
+      "description": "Run colocated specs for repository lint and diagnostic tooling",
+      "cache": true,
+      "inputs": ["scripts/**/*.luau", "packages/test-harness/src/Harness.luau"],
+      "run": ["lune", "run", "scripts/test-tooling"],
+    },
+    "banner-fresh": {
+      "description": "Verify .github/banner.svg matches scripts/banner.luau",
+      "cache": true,
+      "inputs": ["packages/true-myth/src/**/*.luau", ".github/banner.svg", "scripts/banner.luau"],
+      "run": ["lune", "run", "scripts/banner", "--", "--check"],
+    },
+  },
+  "commands": {
+    "build": {
+      "description": "Rebuild dist/TrueMyth.lua (Lua 5.1 bundle via darklua) and verify it",
+      "run": ["lune", "run", "scripts/build"],
+    },
+    "build-fresh": {
+      "description": "Verify dist/TrueMyth.lua matches darklua output, parses as Lua 5.1, and uses only Lua 5.1 globals",
+      "run": ["lune", "run", "scripts/build", "--", "--check"],
+    },
+    "banner": {
+      "description": "Regenerate .github/banner.svg",
+      "run": ["lune", "run", "scripts/banner"],
+    },
+    "bundle-specs": {
+      "description": "Run all specs against Luau sources and dist/TrueMyth.lua (Lua 5.1 sandbox) with 100% API coverage",
+      "run": ["lune", "run", "scripts/test"],
+    },
+    "fixtures": {
+      "description": "Verify tests/pass type-checks clean and tests/fail matches exact .expected diagnostics",
+      "run": ["lune", "run", "scripts/fixtures"],
+    },
+    "fixtures-update": {
+      "description": "Rewrite tests/fail/*.expected files from current luau-lsp diagnostics",
+      "run": ["lune", "run", "scripts/fixtures", "--", "--update"],
+    },
+    "scripts-typecheck": {
+      "description": "Type-check wow entry and CLI scripts under --!strict on Luau's new solver",
+      "run": [
+        "luau-lsp",
+        "analyze",
+        "--platform=standard",
+        "--flag:LuauSolverV2=true",
+        "--base-luaurc=.luaurc",
+        "wow/",
+        "scripts/",
+      ],
+    },
+    "site-install": {
+      "description": "Install docs site dependencies from site/bun.lock",
+      "run": ["bun", "install", "--cwd", "site", "--frozen-lockfile"],
+    },
+    "site-check": {
+      "description": "Run docs site typecheck, lint, format check, unit tests, and build",
+      "run": "bun run --cwd site typecheck && bun run --cwd site lint && bun run --cwd site fmt:check && bun test --cwd site && bun run --cwd site build",
+    },
+    "site-build": {
+      "description": "Build the static documentation site into site/dist",
+      "run": ["bun", "run", "--cwd", "site", "build"],
+    },
+    "site-dev": {
+      "description": "Run the local documentation site dev server",
+      "run": ["bun", "run", "--cwd", "site", "dev"],
+    },
+  },
+}

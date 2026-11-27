@@ -1,12 +1,12 @@
-14:16: TypeError: Key 'value' is missing from 'Nothing' in the type 'Just<number> | Nothing'
-18:2: TypeError: Property value of table 'Just<number>' is read-only
-22:46: TypeError: Expected this to be 'number', but got 'string'
-26:32: TypeError: Expected this to be
+12:16: TypeError: Key 'value' is missing from 'Nothing' in the type 'Just<number> | Nothing'
+15:2: TypeError: Property value of table 'Just<number>' is read-only
+18:46: TypeError: Expected this to be 'number', but got 'string'
+21:32: TypeError: Expected this to be
 	'Just<number> | Nothing'
 but got
 	'Just<string> | Nothing'; 
 `Just<string>` is not a subtype of `Just<number> | Nothing`
-29:30: TypeError: Table type '{ Just: (number) -> number }' not compatible with type 'Matcher<number, number>' because the former is missing field 'Nothing'
-37:11: TypeError: 'resultPayload' type function errored at runtime: expected a Result, got { read kind: "Just", read value: number } | { read kind: "Nothing" }
-37:34: TypeError: Expected this to be 'resultPayload<Just<number> | Nothing, "Ok", "value">', but got 'number'; 
+23:30: TypeError: Table type '{ Just: (number) -> number }' not compatible with type 'Matcher<number, number>' because the former is missing field 'Nothing'
+30:11: TypeError: 'resultPayload' type function errored at runtime: expected a Result, got { read kind: "Just", read value: number } | { read kind: "Nothing" }
+30:34: TypeError: Expected this to be 'resultPayload<Just<number> | Nothing, "Ok", "value">', but got 'number'; 
 the reduced type is `never`, and `number` is not a subtype of `never`

@@ -1,6 +1,7 @@
 {
   "languageMode": "strict",
   "aliases": {
-    "lune": "~/.lune/.typedefs/0.11.1/"
+    "lune": "~/.lune/.typedefs/0.11.1/",
+    "luau-true-myth": ".sergeant/luau/luau-true-myth"
   }
 }

@@ -36,30 +36,32 @@ Rules marked **5.1** matter only for code that ships to Lua 5.1.
 Every known failure is part of a function's return type as a tagged error value; throwing is reserved for defects.
 Untrusted input is parsed once, at the boundary, into precise domain types; inner code never re-validates.
 Lifecycles are tagged unions, not bags of optional fields and booleans. Every union is matched exhaustively, ending in
-a `never` check. There is no `any`, no non-null assertion and no `as` cast except at a few documented seams, and each
-of those carries a `SAFETY:` comment saying why it holds. Data is read-only by default. Dependencies are small
+a `never` check. There is no `any`, no non-null assertion and no `as` cast except at a few documented seams, each
+of which the source rules justify with a `SAFETY:` comment (this repository uses a function name instead, see section 5). Data is read-only by default. Dependencies are small
 structural "ports" passed in explicitly; there are no module mocks, no barrels and no vague module names. Tests go
 through real entry points and assert observable results. The TypeScript sources enforce this with `strict`
 compiler flags plus conventions; this guide adds tooling wherever Luau has something to enforce it with.
 
 ## Enforcement at a glance
 
-| Rule                                   | Enforced by                                                                            |
-| -------------------------------------- | -------------------------------------------------------------------------------------- |
-| Strict mode everywhere                 | `.luaurc` `languageMode: strict`, `--!strict` header (custom lint)                     |
-| New solver                             | `--flag:LuauSolverV2=true` in CI; editor fflag settings                                |
-| No `--!nonstrict` / `--!nocheck`       | custom lint (`scripts/lint.luau`)                                                      |
-| `:: any` only with a `SAFETY:` comment | custom lint                                                                            |
-| Exhaustive matching                    | `casesHandled(value: never)`: luau-lsp error when a variant is unhandled               |
-| Read-only data                         | `read` property modifiers: luau-lsp error on write                                     |
-| Errors as values                       | `Result<T, E>` return types; review; `selene` cannot detect `error()` misuse           |
-| No Luau-only library calls in 5.1 code | custom lint, `selene` with `std = "lua51"` on the darklua output, Lua 5.1-only runtime |
-| Output is valid Lua 5.1                | `stylua --syntax Lua51` on the darklua output                                          |
-| Formatting                             | StyLua (Luau), dprint (Markdown/JSON/YAML/TOML)                                        |
-| Expected type errors stay expected     | negative fixtures compared to exact luau-lsp output                                    |
-| Every public function tested           | API coverage check in the test runner                                                  |
-| Workflows pinned and safe              | actionlint, zizmor, actions pinned by SHA, Dependabot                                  |
-| The gate is the gate                   | `moon run :check` runs cold in CI; lefthook runs it pre-push                           |
+| Rule                                    | Enforced by                                                                            |
+| --------------------------------------- | -------------------------------------------------------------------------------------- |
+| Strict mode everywhere                  | `.luaurc` `languageMode: strict`, `--!strict` header (custom lint)                     |
+| New solver                              | `--flag:LuauSolverV2=true` in CI; editor fflag settings                                |
+| No `--!nonstrict` / `--!nocheck`        | custom lint (`scripts/lint.luau`)                                                      |
+| `:: any` only in `unchecked…` functions | custom lint                                                                            |
+| No comments: names and tests instead    | custom lint (`--!strict` and fixture `-- expect-error:` markers excepted)              |
+| No generic local helpers in `src/`      | custom lint (they trip luau-lsp 1.70.1, see section 10)                                |
+| Exhaustive matching                     | `casesHandled(value: never)`: luau-lsp error when a variant is unhandled               |
+| Read-only data                          | `read` property modifiers: luau-lsp error on write                                     |
+| Errors as values                        | `Result<T, E>` return types; review; `selene` cannot detect `error()` misuse           |
+| No Luau-only library calls in 5.1 code  | custom lint, `selene` with `std = "lua51"` on the darklua output, Lua 5.1-only runtime |
+| Output is valid Lua 5.1                 | `stylua --syntax Lua51` on the darklua output                                          |
+| Formatting                              | StyLua (Luau), dprint (Markdown/JSON/YAML/TOML)                                        |
+| Expected type errors stay expected      | negative fixtures compared to exact luau-lsp output                                    |
+| Every public function tested            | API coverage check in the test runner                                                  |
+| Workflows pinned and safe               | actionlint, zizmor, actions pinned by SHA, Dependabot                                  |
+| The gate is the gate                    | `moon run :check` runs cold in CI; lefthook runs it pre-push                           |
 
 ## 1. Type checker settings
 
@@ -124,7 +126,8 @@ temporary not-yet-implemented path. Helpers: `casesHandled`, `shouldNeverHappen`
 - `error()` is for defects only: a nil passed to `Maybe.just`, `Task.await` outside `Task.async`, an unhandled case
   reached at run time.
 - End every exhaustive chain with `Exhaustive.casesHandled(value)`. It is a compile-time check and raises if reached.
-- Document what a function raises in its doc comment, and only defects. Expected failures belong in the return type.
+- Raise only for defects, and cover each one with a test that asserts the message (`t.raises`). Expected failures belong
+  in the return type.
 - **5.1:** WoW's Lua 5.1 cannot yield across `pcall`, so never `Task.await` inside a protected call.
 
 ## 4. Tagged unions and exhaustive matching
@@ -157,19 +160,21 @@ helpers `Tags<E>`, `ExtractTag<E, K>`.
 - Luau has no user-defined type guards (`x is T`). Predicates such as `Result.isOk` return `boolean` and do not
   narrow, so use them for filtering and compare the tag to narrow.
 - Union literal tables sometimes need a cast to the variant: `{ kind = "Invalid", reason = "..." } :: Invalid`.
-  This upcast is checked and is the one cast that needs no `SAFETY:` comment.
+  This upcast is checked, so it is allowed anywhere.
 
 ## 5. No `any`, no unexplained casts, no forced non-nil
 
 **Source rule:** avoid `any`, `as` casts and the non-null `!`. Every remaining cast needs a Rust-style `// SAFETY:`
-comment. `as const` is fine.
+comment. `as const` is fine. This repository replaces the comment with a name (see below).
 
 **Luau:**
 
 - `unknown` for values of unknown type, then narrow with `type(x) == "table"` or parse (section 6). `any` turns off
   checking for everything it touches.
-- `:: T` is a checked cast only when one type is a subtype of the other. `:: any` is the escape hatch, and every one
-  needs a `-- SAFETY:` comment within three lines above it saying why it holds. The custom lint enforces this.
+- `:: T` is a checked cast only when one type is a subtype of the other. `:: any` is the escape hatch, and it may only
+  appear inside a small function whose name starts with `unchecked` and says what it assumes:
+  `uncheckedJustOfNonNil`, `uncheckedRecordOf`, `uncheckedRequireSpec`. The custom lint enforces this. The name
+  replaces a `SAFETY:` comment, and callers read the assumption at every call site.
 - Acceptable `:: any` seams, all present in this library: viewing a generic parameter through its runtime shape
   after a type function has validated it; one private non-generic representation (section 10); `setmetatable`
   results.
@@ -265,6 +270,7 @@ generics, and how this library's API is shaped around it.
   This works for annotated and unannotated callbacks, across modules and inside other generic functions. The type
   function also validates its input and raises a clear error ("expected a Result, got ...") for anything else. Type
   functions are checked too: annotate them `(t: type): type`, and declare `types` for selene (`std = "luau+..."`).
+
 - **Unannotated callbacks that use operators need annotations** (`function(n: number) return n + 1 end`). The solver
   asks for them: "Consider placing the following annotations on the arguments".
 - **Generic local helpers called from closures inside generic functions break.** You get bogus "No valid
@@ -327,13 +333,25 @@ modules. Never `vi.mock`. Assert observable outcomes. Do not bypass parsers.
   solver regressions when luau-lsp is bumped.
 - Enforce API coverage: the runner records which public functions the specs call, and fails on any it missed.
 
-## 14. Documentation comments
+## 14. Names and tests instead of comments
 
 **Source rule:** JSDoc on every exported symbol.
 
-**Luau:** a `---` comment directly above every public function and exported type (luau-lsp shows it on hover). Say
-what the function returns for each variant and what it raises (defects only). No linter enforces this yet. A
-custom lint could check `^function Module%.` lines for a preceding `---`.
+**This repository departs from that rule:** there are no comments in Luau code. Comments drift from the code they
+describe and nothing checks them. Instead:
+
+- **Descriptive names.** A function or local says what it is (`delayBeforeNextAttempt`, `whenRecordSettles`,
+  `uncheckedRawField`). If a block needs a comment to explain it, it becomes a named function.
+- **Small functions.** Each does one thing, so its name is its documentation.
+- **Colocated tests.** `src/Result.luau` sits next to `src/Result.spec.luau`. A test name states one behaviour
+  ("andThen chains fallible steps"), and its body is a worked example that cannot go stale. Algorithms get a test
+  per case.
+- **Types as the reference.** The API reference is generated from the Luau types by
+  [starlight-luau](https://github.com/Braden1996/starlight-luau), with each function's spec cases as examples.
+- **Prose where prose belongs.** Explanations live in the guides and in `docs/`, not in source files.
+
+The custom lint rejects any comment except the `--!strict` directive and the `-- expect-error:` markers of the
+negative fixtures, which are test assertions.
 
 ## 15. CI gates
 

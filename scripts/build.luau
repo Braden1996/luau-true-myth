@@ -1,16 +1,9 @@
 --!strict
--- Builds dist/TrueMyth.lua, the Lua 5.1 bundle for WoW addons, and checks it:
---   * darklua bundles wow/TrueMyth.luau and everything it requires (.darklua.json), types removed;
---   * the licence notices are prepended (MIT requires them in every copy);
---   * the output parses as Lua 5.1 (StyLua `--syntax Lua51`), so no Luau syntax survives;
---   * selene with the `lua51` standard library finds no unknown global or library function.
--- `lune run scripts/build -- --check` builds to a temporary file and fails if dist/TrueMyth.lua differs.
--- Runtime behaviour of the bundle is tested by scripts/test, in a Lua 5.1-only environment.
 
 local fs = require("@lune/fs")
 local process = require("@lune/process")
 
-local Source = require("../src/TrueMyth")
+local Source = require("../packages/true-myth/src/TrueMyth")
 
 local OUTPUT = "dist/TrueMyth.lua"
 local SCRATCH = ".build"
