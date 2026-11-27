@@ -20,7 +20,7 @@ local function luauFilesUnder(directory: string, found: { string })
 	end
 end
 
-local files = {}
+local files: { string } = {}
 for _, root in ROOTS do
 	luauFilesUnder(root, files)
 end
@@ -28,7 +28,8 @@ end
 local problemCount = 0
 for _, file in files do
 	local problems: { Rules.Problem } = Rules.check(file, fs.readFile(file))
-	for _, problem in problems do
+	for i = 1, #problems do
+		local problem = problems[i]
 		problemCount += 1
 		print(string.format("FAIL %s:%d: %s", file, problem.line, problem.message))
 	end
