@@ -1,0 +1,17 @@
+{
+  "name": "@luau-true-myth/docs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@astrojs/starlight": "catalog:",
+    "astro": "catalog:",
+    "luau-web-checker": "catalog:",
+    "starlight-luau": "catalog:"
+  },
+  "devDependencies": {
+    "@astrojs/check": "catalog:",
+    "@types/bun": "catalog:",
+    "@types/node": "catalog:"
+  }
+}

@@ -4,7 +4,7 @@
 
 ## Checklist
 
-- [ ] `mise exec -- moon run :check` passes locally
-- [ ] `dist/TrueMyth.lua` and `.github/banner.svg` were regenerated (`moon run lib:build`, `lune run scripts/banner`), not edited by hand
-- [ ] Every new public function has a spec (the API coverage check enforces it) and, if its types are subtle, a fixture
-- [ ] `CHANGELOG.md` has a line under "Unreleased" if users will notice the change
+- [ ] `sgt check`, `sgt test`, and `sgt build` pass locally
+- [ ] Regenerated any affected artifacts with `sgt run bundle` and `sgt run banner`
+- [ ] Added specs for new public functions and fixtures for changes to compiler behavior
+- [ ] Added an entry to `CHANGELOG.md` under Unreleased for user-visible changes

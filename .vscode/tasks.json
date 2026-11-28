@@ -18,7 +18,7 @@
     {
       "label": "build Lua 5.1 bundle",
       "type": "shell",
-      "command": "mise exec -- sgt run build",
+      "command": "mise exec -- sgt run bundle",
       "group": "build",
       "problemMatcher": []
     },

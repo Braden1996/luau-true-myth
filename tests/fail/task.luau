@@ -1,5 +1,5 @@
 --!strict
-local Task = require("../../packages/true-myth/src/Task")
+local Task = require("../../packages/libraries/luau/pure/true-myth/src/Task")
 
 type Task<T, E> = Task.Task<T, E>
 

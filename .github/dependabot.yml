@@ -1,5 +1,5 @@
 # Dependabot keeps the SHA-pinned GitHub Actions current. Tools are pinned in mise.toml (bump by hand, then
-# `mise lock` and `moon run :check`).
+# `mise lock` and `sgt check`).
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -17,9 +17,9 @@ updates:
       # One scope for every ecosystem: `include: scope` writes `deps-dev`, which pr-title rejects.
       prefix: build(deps)
   - package-ecosystem: bun
-    directory: /site
+    directory: /
     ignore:
-      # astro check refuses TypeScript 7; the site gets 7 as @typescript/native and keeps 6 for astro check.
+      # astro check refuses TypeScript 7; keep TypeScript 6 for astro check.
       - dependency-name: typescript
         update-types: ["version-update:semver-major"]
     schedule:
@@ -28,7 +28,7 @@ updates:
     cooldown:
       default-days: 7
     groups:
-      site:
+      docs:
         patterns: ["*"]
     commit-message:
       prefix: build(deps)

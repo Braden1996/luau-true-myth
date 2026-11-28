@@ -27,6 +27,6 @@ body:
     id: version
     attributes:
       label: luau-true-myth version and luau-lsp version
-      placeholder: v0.1.0, luau-lsp 1.70.1
+      placeholder: v0.2.0, luau-lsp 1.70.1
     validations:
       required: true

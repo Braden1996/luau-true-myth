@@ -1,6 +1,6 @@
 --!strict
-local Exhaustive = require("../../packages/true-myth/src/Exhaustive")
-local Result = require("../../packages/true-myth/src/Result")
+local Exhaustive = require("../../packages/libraries/luau/pure/true-myth/src/Exhaustive")
+local Result = require("../../packages/libraries/luau/pure/true-myth/src/Result")
 
 type Result<T, E> = Result.Result<T, E>
 

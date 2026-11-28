@@ -1,5 +1,5 @@
 -- luau-true-myth 0.2.0: Maybe, Result and Task for Lua 5.1 (World of Warcraft addons).
--- https://github.com/Braden1996/luau-true-myth - generated from the Luau sources by darklua; do not edit.
+-- https://github.com/Braden1996/luau-true-myth - generated from the Luau sources by Sergeant; do not edit.
 -- Listed in a .toc it stores the library as `ns.TrueMyth`; loaded any other way it returns it.
 --
 -- MIT License

@@ -1,0 +1,5 @@
+{
+  "name": "@luau-true-myth/cli",
+  "kind": "lune:cli",
+  "dependencies": ["@luau-true-myth/test-harness", "@luau-true-myth/true-myth"],
+}

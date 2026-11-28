@@ -48,7 +48,7 @@ compiler flags plus conventions; this guide adds tooling wherever Luau has somet
 | --------------------------------------- | -------------------------------------------------------------------------------------- |
 | Strict mode everywhere                  | `.luaurc` `languageMode: strict`, `--!strict` header (custom lint)                     |
 | New solver                              | `--flag:LuauSolverV2=true` in CI; editor fflag settings                                |
-| No `--!nonstrict` / `--!nocheck`        | custom lint (`scripts/lint.luau`)                                                      |
+| No `--!nonstrict` / `--!nocheck`        | custom lint (`packages/runtimes/cli/src/lint.effect.luau`)                             |
 | `:: any` only in `unchecked…` functions | custom lint                                                                            |
 | No comments: names and tests instead    | custom lint (`--!strict` and fixture `-- expect-error:` markers excepted)              |
 | No generic local helpers in `src/`      | custom lint (they trip luau-lsp 1.70.1, see section 10)                                |
@@ -57,11 +57,11 @@ compiler flags plus conventions; this guide adds tooling wherever Luau has somet
 | Errors as values                        | `Result<T, E>` return types; review; `selene` cannot detect `error()` misuse           |
 | No Luau-only library calls in 5.1 code  | custom lint, `selene` with `std = "lua51"` on the darklua output, Lua 5.1-only runtime |
 | Output is valid Lua 5.1                 | `stylua --syntax Lua51` on the darklua output                                          |
-| Formatting                              | StyLua (Luau), dprint (Markdown/JSON/YAML/TOML)                                        |
+| Formatting                              | Sergeant formatting                                                                    |
 | Expected type errors stay expected      | negative fixtures compared to exact luau-lsp output                                    |
 | Every public function tested            | API coverage check in the test runner                                                  |
 | Workflows pinned and safe               | actionlint, zizmor, actions pinned by SHA, Dependabot                                  |
-| The gate is the gate                    | `moon run :check` runs cold in CI; lefthook runs it pre-push                           |
+| The gate is the gate                    | `sgt check` runs in CI                                                                 |
 
 ## 1. Type checker settings
 
@@ -355,11 +355,9 @@ negative fixtures, which are test assertions.
 
 ## 15. CI gates
 
-- One gate, `moon run :check`, run cold in CI (`MOON_CACHE=write`, no restored cache) and by the pre-push hook
-  (`--affected`).
-- Tools are pinned in `mise.toml` with checksums in `mise.lock`. GitHub Actions are pinned by commit SHA and bumped by
-  Dependabot.
-- actionlint and zizmor check the workflows, typos checks spelling, dprint formats non-Luau files, and lychee checks
+- Run `sgt check` locally and in CI.
+- Tools are pinned in `mise.toml` with checksums in `mise.lock`. Sergeant actions use the tool release tag. Dependabot updates the other actions.
+- actionlint and zizmor check the workflows, Sergeant formats source and documentation, and lychee checks
   links offline.
 - Generated files (the bundle, the banner) are checked for freshness, never edited by hand.
 

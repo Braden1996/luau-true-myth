@@ -1,5 +1,5 @@
 --!strict
-local TrueMyth = require("../../packages/true-myth/src/TrueMyth")
+local TrueMyth = require("../../packages/libraries/luau/pure/true-myth/src/TrueMyth")
 
 local Maybe, Result, Task, Toolbelt = TrueMyth.Maybe, TrueMyth.Result, TrueMyth.Task, TrueMyth.Toolbelt
 

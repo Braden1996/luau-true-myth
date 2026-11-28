@@ -1,10 +1,4 @@
 {
-  "ignorePatterns": [
-    ".build/**",
-    ".sergeant/**",
-    "luau_packages/**",
-    "dist/**",
-    "mise.lock",
-    "site/**",
-  ],
+  // Sergeant writes package.json and compares its exact bytes on frozen installs.
+  "ignorePatterns": ["dist/**", "mise.lock", "package.json"],
 }

@@ -1,5 +1,5 @@
 --!strict
-local Maybe = require("../../packages/true-myth/src/Maybe")
+local Maybe = require("../../packages/libraries/luau/pure/true-myth/src/Maybe")
 
 type Maybe<T> = Maybe.Maybe<T>
 
@@ -26,5 +26,5 @@ local _ = Maybe.match(found, { -- expect-error: missing field 'Nothing'
 	end,
 })
 
-local Result = require("../../packages/true-myth/src/Result")
+local Result = require("../../packages/libraries/luau/pure/true-myth/src/Result")
 local _ = Result.unwrapOr(found, 0) -- expect-error: expected a Result

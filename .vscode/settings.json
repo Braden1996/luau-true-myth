@@ -4,7 +4,7 @@
   "luau-lsp.fflags.enableNewSolver": true,
   "luau-lsp.ignoreGlobs": ["dist/**", "tests/fail/**"],
   "files.exclude": {
-    ".moon/cache": true,
+    ".sergeant": true,
     ".build": true
   },
   "search.exclude": {
@@ -17,22 +17,13 @@
     "editor.formatOnSave": true,
     "editor.insertSpaces": false
   },
-  "[markdown][json][jsonc][yaml][toml]": {
-    "editor.defaultFormatter": "dprint.dprint",
-    "editor.formatOnSave": true
-  },
   "json.schemas": [
     {
       "fileMatch": ["/sergeant.jsonc", "/sergeant.json"],
       "url": "./.sergeant/schema.json"
     },
     {
-      "fileMatch": [
-        "/**/sergeant.jsonc",
-        "/**/sergeant.json",
-        "!/sergeant.jsonc",
-        "!/sergeant.json"
-      ],
+      "fileMatch": ["/**/sergeant.jsonc", "/**/sergeant.json", "!/sergeant.jsonc", "!/sergeant.json"],
       "url": "./.sergeant/schema.unit.json"
     },
     {

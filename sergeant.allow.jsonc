@@ -1,0 +1,43 @@
+// Problems that were here before Sergeant was the rule. An entry only shrinks:
+// `sgt fix` lowers a count that is too high, and nothing raises one except `sgt allow`.
+{
+  "$schema": "./.sergeant/schema.allow.json",
+  "allow": [
+    {
+      "rule": "boundaries/missing",
+      "file": "packages/runtimes/cli/src/banner.effect.luau",
+      "count": 2,
+      "reason": "Sergeant 0.15.0 does not resolve Lune host modules in its dependency graph. Lune provides these at runtime and its typedefs are checked separately.",
+    },
+    {
+      "rule": "boundaries/missing",
+      "file": "packages/runtimes/cli/src/build.effect.luau",
+      "count": 2,
+      "reason": "Sergeant 0.15.0 does not resolve Lune host modules in its dependency graph. Lune provides these at runtime and its typedefs are checked separately.",
+    },
+    {
+      "rule": "boundaries/missing",
+      "file": "packages/runtimes/cli/src/fixtures.effect.luau",
+      "count": 2,
+      "reason": "Sergeant 0.15.0 does not resolve Lune host modules in its dependency graph. Lune provides these at runtime and its typedefs are checked separately.",
+    },
+    {
+      "rule": "boundaries/missing",
+      "file": "packages/runtimes/cli/src/lint.effect.luau",
+      "count": 2,
+      "reason": "Sergeant 0.15.0 does not resolve Lune host modules in its dependency graph. Lune provides these at runtime and its typedefs are checked separately.",
+    },
+    {
+      "rule": "boundaries/missing",
+      "file": "packages/runtimes/cli/src/main.luau",
+      "count": 1,
+      "reason": "Sergeant 0.15.0 does not resolve Lune host modules in its dependency graph. Lune provides these at runtime and its typedefs are checked separately.",
+    },
+    {
+      "rule": "boundaries/missing",
+      "file": "packages/runtimes/cli/src/test.effect.luau",
+      "count": 3,
+      "reason": "Sergeant 0.15.0 does not resolve Lune host modules in its dependency graph. Lune provides these at runtime and its typedefs are checked separately.",
+    },
+  ],
+}

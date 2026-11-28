@@ -1,0 +1,9 @@
+{
+  "name": "@luau-true-myth/docs",
+  "kind": "astro:app",
+  "reads": ["docs/**/*.md", "CONTRIBUTING.md", "CHANGELOG.md", "packages/libraries/luau/pure/true-myth/src/**/*.luau"],
+  "tools": ["luau-ast"],
+  "test": {
+    "reads": ["docs/api/**/*.md", "packages/libraries/luau/pure/true-myth/src/**/*.luau"],
+  },
+}

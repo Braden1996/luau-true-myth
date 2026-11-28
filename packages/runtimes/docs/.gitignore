@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.astro/
+*.tsbuildinfo
+# Generated: project/ by the project docs integration, api/ by starlight-luau.
+src/content/docs/project/
+src/content/docs/api/

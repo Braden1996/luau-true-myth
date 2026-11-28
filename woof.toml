@@ -3,7 +3,7 @@ name = "luau-true-myth"
 version = "0.2.0"
 kind = "library"
 target = "luau"
-entry = "packages/true-myth/src/TrueMyth.luau"
+entry = "packages/libraries/luau/pure/true-myth/src/TrueMyth.luau"
 
 [luaurc]
 sync = false

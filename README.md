@@ -229,7 +229,7 @@ Every function takes its data first. Signatures are abbreviated: `OkOf<R>`, `Err
 | `Toolbelt`   | `toMaybe` `toOkOrErr` `toOkOrElseErr` `transposeResult` `transposeMaybe`                                                                                                                                                                                                                            |
 | `Exhaustive` | `casesHandled`                                                                                                                                                                                                                                                                                      |
 
-Each module has a colocated spec (for example [`packages/true-myth/src/Result.spec.luau`](packages/true-myth/src/Result.spec.luau)) that shows every function in use; the [API reference](https://braden1996.github.io/luau-true-myth/api/) is generated from the types, with those specs as examples.
+Each module has a colocated spec (for example [`packages/libraries/luau/pure/true-myth/src/Result.spec.luau`](packages/libraries/luau/pure/true-myth/src/Result.spec.luau)) that shows every function in use; the [API reference](https://braden1996.github.io/luau-true-myth/api/) is generated from the types, with those specs as examples.
 
 ## Design and differences from true-myth
 
@@ -237,20 +237,9 @@ Each module has a colocated spec (for example [`packages/true-myth/src/Result.sp
 functions for generics, and `Task` without promises. It also lists what was not ported and why. The rules the code
 follows, and how each is enforced, are in the [strict Luau guide](docs/strict-luau-guide.md).
 
-## Development
+## Contributing
 
-[Sergeant](https://github.com/Braden1996/sergeant) (`sgt`) orchestrates checks, tests, and commands, and
-[mise](https://mise.jdx.dev) pins every tool (`sgt`, `woof`, Lune, luau-lsp, StyLua, selene, darklua, typos,
-actionlint, zizmor, lychee, lefthook). `mise exec -- sgt check` and `mise exec -- sgt test` run the core gate:
-
-- type-checking on the new solver with strict Lua 5.1 static analysis (`target: "lua51"`);
-- the custom lint, selene and StyLua;
-- the Lua 5.1 bundle build and its freshness;
-- fast symbol-cached specs on LuaJIT (`sgt test`) plus Lua 5.1 sandboxed bundle coverage (`sgt run bundle-specs`);
-- the type fixtures (`sgt run fixtures`);
-- spelling, links, workflow lint, security audit, and formatting.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md) for local checks, docs, and releases.
 
 ## Credits and licence
 
